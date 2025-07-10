@@ -43,14 +43,17 @@ export default function OfficeDashboard() {
           />
           <OccupancyState state={occupancy?.state === 'on' ? 'Occupied' : 'Empty'} />
         </DashboardHeader>
-        <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '32px 0 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
           <RoomInfo
             roomName="Office"
             tempSensor="sensor.office_awair_temperature"
             aqiSensor="sensor.office_awair_score"
+            humiditySensor="sensor.office_awair_humidity"
+            co2Sensor="sensor.office_awair_carbon_dioxide"
+            tvocSensor="sensor.office_awair_vocs"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 32 }}>
+        <div style={{ width: '100%', marginTop: 25 }}>
           <DeviceRow>
             <LightCard
               entityId="light.office_lights"

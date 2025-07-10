@@ -1,23 +1,45 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  html, body {
-    font-family: 'Poppins', Arial, Helvetica, sans-serif;
-    box-sizing: border-box;
+  * {
     margin: 0;
     padding: 0;
-    background: #212529;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
+    background-color: #000;
     color: #fff;
+    overflow-x: hidden;
+    
+    /* Remove mobile tap highlights globally */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
-  *, *:before, *:after {
-    box-sizing: inherit;
+  /* Allow text selection for input fields and content areas */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
   }
 
-  * { 
-    -moz-box-sizing: border-box; 
-    -webkit-box-sizing: border-box; 
-     box-sizing: border-box; 
+  /* Remove focus outlines and replace with custom styles */
+  *:focus {
+    outline: none;
+  }
+
+  /* Remove blue highlight on buttons and clickable elements */
+  button, a, [role="button"], [tabindex] {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
   }
 `;
 

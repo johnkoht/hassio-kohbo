@@ -16,6 +16,7 @@ const LeftContent = styled.div`
   flex-direction: row;
   align-items: flex-start;
   gap: 10px;
+  margin-top: 15px;
 `;
 
 export default function DashboardHeader({ children }: { children: React.ReactNode }) {

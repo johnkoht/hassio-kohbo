@@ -1,76 +1,103 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useEntityState } from '../../contexts/HassContext';
+import { useModal } from '../../contexts/ModalContext';
 
-const Container = styled.div`
+const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  margin-top: 95px;
+  margin-top: 80px;
   margin-bottom: 30px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 `;
 
-const RoomName = styled.div`
-  font-size: 100px;
-  font-style: normal;
-  font-weight: 400;
+const RoomName = styled.h2`
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  font-size: 100px;
+  font-weight: 400;
   color: #fff;
+  margin: 0;
   line-height: 100px;
 `;
 
-const TempQualityRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 5px;
-  font-style: normal;
-  font-weight: 500;
+const ClimateInfo = styled.div`
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   font-size: 18px;
-  line-height: 14px;
-  color: #FFFFFF;
-  margin-bottom: 10px;
-`;
-
-const Temp = styled.div`
   font-weight: 500;
-  color: #fff;
+  color: #ffffff;
+  line-height: 18px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin-bottom: 5px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 `;
-
-const AirQuality = styled.div`
-  font-weight: 500;
-  color: #fff;
-`;
-
-function getAirQualityText(score: number | null): string {
-  if (score === null) return '';
-  if (score > 90) return 'Air Quality is Good';
-  if (score > 70) return 'Air Quality is Moderate';
-  if (score > 50) return 'Air Quality is Unhealthy';
-  return 'Air Quality is Poor';
-}
 
 interface RoomInfoProps {
   roomName: string;
   tempSensor: string;
-  aqiSensor: string;
+  aqiSensor?: string;
+  humiditySensor?: string;
+  co2Sensor?: string;
+  tvocSensor?: string;
 }
 
-export default function RoomInfo({ roomName, tempSensor, aqiSensor }: RoomInfoProps) {
-  const temp = useEntityState(tempSensor);
-  const aqi = useEntityState(aqiSensor);
+function getAQIDescription(score: number): string {
+  if (score >= 80) return 'air quality is excellent';
+  if (score >= 60) return 'air quality is good';
+  if (score >= 40) return 'air quality is fair';
+  return 'air quality is poor';
+}
 
-  const tempValue = temp?.state ? `${Math.round(Number(temp.state))}°` : '--';
-  const aqiScore = aqi?.state ? Number(aqi.state) : null;
-  const airQualityText = getAirQualityText(aqiScore);
+export default function RoomInfo({ 
+  roomName, 
+  tempSensor, 
+  aqiSensor, 
+  humiditySensor, 
+  co2Sensor, 
+  tvocSensor 
+}: RoomInfoProps) {
+  const { openModal } = useModal();
+  const tempEntity = useEntityState(tempSensor);
+  const aqiEntity = useEntityState(aqiSensor || '');
+
+  const temperature = tempEntity?.state ? Math.round(parseFloat(tempEntity.state)) : '--';
+  const aqiScore = aqiEntity?.state ? Math.round(parseFloat(aqiEntity.state)) : null;
+
+  const handleClick = () => {
+    // Create a pipe-separated string with room info for the modal
+    const modalEntityId = [
+      roomName, 
+      tempSensor, 
+      humiditySensor || '', 
+      aqiSensor || '', 
+      co2Sensor || '', 
+      tvocSensor || ''
+    ].join('|');
+    openModal('climate', modalEntityId);
+  };
+
+  const climateText = aqiScore !== null 
+    ? `${temperature}° – ${getAQIDescription(aqiScore)}`
+    : `${temperature}°`;
 
   return (
-    <Container>
-      <TempQualityRow>
-        <Temp>{tempValue}</Temp>–<AirQuality>{airQualityText}</AirQuality>
-      </TempQualityRow>
+    <InfoContainer>
+      <ClimateInfo onClick={handleClick}>{climateText}</ClimateInfo>
       <RoomName>{roomName}</RoomName>
-    </Container>
+    </InfoContainer>
   );
 } 
