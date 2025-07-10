@@ -1,14 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
+import DateTime from '../DateTime/DateTime';
 
 const HeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
   position: relative;
 `;
 
+const LeftContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+`;
+
 export default function DashboardHeader({ children }: { children: React.ReactNode }) {
-  return <HeaderContainer>{children}</HeaderContainer>;
+  return (
+    <HeaderContainer>
+      <LeftContent>{children}</LeftContent>
+      <DateTime />
+    </HeaderContainer>
+  );
 } 
