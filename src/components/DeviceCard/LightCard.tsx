@@ -2,6 +2,7 @@ import React from 'react';
 import DeviceCard from './DeviceCard';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { useEntityState } from '../../contexts/HassContext';
+import { useModal } from '../../contexts/ModalContext';
 import { ReactComponent as LightIcon } from '../../assets/device_icons/light.svg';
 import { ReactComponent as LampIcon } from '../../assets/device_icons/lamp.svg';
 import { ReactComponent as LightstripIcon } from '../../assets/device_icons/shelf_lights.svg';
@@ -46,12 +47,17 @@ function getLightIcon(lightType: 'ceiling' | 'lightstrip' | 'lamp') {
 
 export default function LightCard({ entityId, name, lightType }: LightCardProps) {
   const entity = useEntityState(entityId);
+  const { openModal } = useModal();
 
   function toggleLight() {
     hassApiFetch(`/api/services/light/turn_${entity?.state === 'on' ? 'off' : 'on'}`, {
       method: 'POST',
       body: JSON.stringify({ entity_id: entityId }),
     });
+  }
+
+  function handleMoreOptions() {
+    openModal('light', entityId);
   }
 
   return (
@@ -61,7 +67,7 @@ export default function LightCard({ entityId, name, lightType }: LightCardProps)
       state={getLightStateString(entity)}
       isActive={entity?.state === 'on'}
       onClick={toggleLight}
-      onMoreOptions={() => {}}
+      onMoreOptions={handleMoreOptions}
     />
   );
 } 
