@@ -7,10 +7,17 @@ import { ReactComponent as LightIcon } from '../../assets/device_icons/light.svg
 import { ReactComponent as LampIcon } from '../../assets/device_icons/lamp.svg';
 import { ReactComponent as LightstripIcon } from '../../assets/device_icons/shelf_lights.svg';
 
+interface RoomLight {
+  entityId: string;
+  name: string;
+}
+
 interface LightCardProps {
   entityId: string;
   name: string;
   lightType: 'ceiling' | 'lightstrip' | 'lamp';
+  roomName?: string;
+  roomLights?: RoomLight[];
 }
 
 function getLightStateString(entity: any): string {
@@ -45,7 +52,7 @@ function getLightIcon(lightType: 'ceiling' | 'lightstrip' | 'lamp') {
   }
 }
 
-export default function LightCard({ entityId, name, lightType }: LightCardProps) {
+export default function LightCard({ entityId, name, lightType, roomName, roomLights }: LightCardProps) {
   const entity = useEntityState(entityId);
   const { openModal } = useModal();
 
@@ -57,7 +64,16 @@ export default function LightCard({ entityId, name, lightType }: LightCardProps)
   }
 
   function handleMoreOptions() {
-    openModal('light', entityId);
+    if (roomName && roomLights && roomLights.length > 1) {
+      // Create modal entityId format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|..."
+      const lightParts = roomLights.map(light => `${light.entityId}:${light.name}`);
+      const modalEntityId = `${roomName}|${lightParts.join('|')}`;
+      openModal('light', modalEntityId);
+    } else {
+      // Fallback to single light format for backwards compatibility
+      const modalEntityId = `${roomName || 'Light'}|${entityId}:${name}`;
+      openModal('light', modalEntityId);
+    }
   }
 
   return (

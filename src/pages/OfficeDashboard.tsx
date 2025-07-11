@@ -33,6 +33,13 @@ export default function OfficeDashboard() {
   const roomState = useEntityState('input_select.office');
   const occupancy = useEntityState('input_boolean.office_occupied');
 
+  // Define all lights in this room (using multiple instances of office_lights for testing)
+  const roomLights = [
+    { entityId: 'light.office_lights', name: 'Ceiling Lights' },
+    { entityId: 'light.office_el_gato_light', name: 'Desk Lamp' },
+    { entityId: 'light.office_shelves', name: 'Office Shelves' },
+  ];
+
   return (
     <Room bg={officeBg}>
       <div style={{ padding: '50px 60px' }}>
@@ -60,6 +67,8 @@ export default function OfficeDashboard() {
               entityId="light.office_lights"
               name="Ceiling Lights"
               lightType="ceiling"
+              roomName="Office"
+              roomLights={roomLights}
             />
             <LightCard
               entityId="light.office_el_gato_light"

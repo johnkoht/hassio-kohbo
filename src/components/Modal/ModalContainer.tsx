@@ -69,18 +69,26 @@ export default function ModalContainer() {
     
     switch (modalState.type) {
       case 'light':
-        return <LightModal entityId={modalState.entityId!} />;
+        // Parse the entityId to get light info - format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|..."
+        const lightParts = modalState.entityId!.split('|');
+        const lightRoomName = lightParts[0];
+        const lights = lightParts.slice(1).map(lightPart => {
+          const [entityId, name] = lightPart.split(':');
+          return { entityId, name };
+        });
+        
+        return <LightModal roomName={lightRoomName} lights={lights} />;
       case 'fan':
         // TODO: Implement FanModal
         return <div>Fan Modal Coming Soon</div>;
       case 'climate':
         // Parse the entityId to get room info - format: "roomName|tempSensor|humiditySensor|aqiSensor|co2Sensor|tvocSensor|pm25Sensor"
-        const [roomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor] = modalState.entityId!.split('|');
-        console.log('Parsed climate modal data:', { roomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor });
+        const [climateRoomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor] = modalState.entityId!.split('|');
+        console.log('Parsed climate modal data:', { climateRoomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor });
         
         return (
           <ClimateModal 
-            roomName={roomName}
+            roomName={climateRoomName}
             tempSensor={tempSensor}
             humiditySensor={humiditySensor || undefined}
             aqiSensor={aqiSensor || undefined}
