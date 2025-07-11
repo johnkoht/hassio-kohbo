@@ -51,6 +51,7 @@ export default function OfficeDashboard() {
             humiditySensor="sensor.office_awair_humidity"
             co2Sensor="sensor.office_awair_carbon_dioxide"
             tvocSensor="sensor.office_awair_vocs"
+            pm25Sensor="sensor.office_awair_pm2_5"
           />
         </div>
         <div style={{ width: '100%', marginTop: 25 }}>

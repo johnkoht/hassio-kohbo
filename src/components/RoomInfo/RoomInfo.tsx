@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useEntityState } from '../../contexts/HassContext';
+import { useEntityState, useHassConnection } from '../../contexts/HassContext';
 import { useModal } from '../../contexts/ModalContext';
 
 const InfoContainer = styled.div`
@@ -8,16 +8,8 @@ const InfoContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  margin-top: 80px;
-  margin-bottom: 30px;
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.05);
-  }
+  margin-top: 85px;
+  margin-bottom: 45px;
 `;
 
 const RoomName = styled.h2`
@@ -36,13 +28,30 @@ const ClimateInfo = styled.div`
   color: #ffffff;
   line-height: 18px;
   cursor: pointer;
-  padding: 8px 12px;
   border-radius: 8px;
   transition: all 0.2s ease;
   margin-bottom: 5px;
+  padding: 8px 12px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
   
   &:hover {
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.loading {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  &:active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(1px);
   }
 `;
 
@@ -53,13 +62,15 @@ interface RoomInfoProps {
   humiditySensor?: string;
   co2Sensor?: string;
   tvocSensor?: string;
+  pm25Sensor?: string;
 }
 
 function getAQIDescription(score: number): string {
-  if (score >= 80) return 'air quality is excellent';
-  if (score >= 60) return 'air quality is good';
-  if (score >= 40) return 'air quality is fair';
-  return 'air quality is poor';
+  if (score >= 81) return 'Air Quality is Good';
+  if (score >= 61) return 'Air Quality is Acceptable';
+  if (score >= 41) return 'Air Quality is Moderate';
+  if (score >= 21) return 'Air Quality is Poor';
+  return 'Air Quality is Hazardous';
 }
 
 export default function RoomInfo({ 
@@ -68,16 +79,41 @@ export default function RoomInfo({
   aqiSensor, 
   humiditySensor, 
   co2Sensor, 
-  tvocSensor 
+  tvocSensor,
+  pm25Sensor 
 }: RoomInfoProps) {
   const { openModal } = useModal();
+  const { isConnected, isInitialized } = useHassConnection();
   const tempEntity = useEntityState(tempSensor);
   const aqiEntity = useEntityState(aqiSensor || '');
 
   const temperature = tempEntity?.state ? Math.round(parseFloat(tempEntity.state)) : '--';
   const aqiScore = aqiEntity?.state ? Math.round(parseFloat(aqiEntity.state)) : null;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Climate info clicked - event fired!', {
+      timestamp: new Date().toISOString(),
+      isInitialized,
+      isConnected
+    });
+
+    if (!isInitialized) {
+      console.log('Home Assistant not yet initialized, please wait...');
+      return;
+    }
+
+    console.log('Climate info clicked - processing...', {
+      tempEntity: tempEntity?.state,
+      aqiEntity: aqiEntity?.state,
+      aqiScore,
+      isConnected,
+      isInitialized,
+      allSensors: { tempSensor, aqiSensor, humiditySensor, co2Sensor, tvocSensor, pm25Sensor }
+    });
+    
     // Create a pipe-separated string with room info for the modal
     const modalEntityId = [
       roomName, 
@@ -85,18 +121,37 @@ export default function RoomInfo({
       humiditySensor || '', 
       aqiSensor || '', 
       co2Sensor || '', 
-      tvocSensor || ''
+      tvocSensor || '',
+      pm25Sensor || ''
     ].join('|');
+    
+    console.log('Opening modal with entityId:', modalEntityId);
     openModal('climate', modalEntityId);
   };
 
-  const climateText = aqiScore !== null 
-    ? `${temperature}° – ${getAQIDescription(aqiScore)}`
-    : `${temperature}°`;
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Prevent touch delay/ghost clicks
+    e.preventDefault();
+  };
+
+  const getClimateText = () => {
+    if (!isInitialized) {
+      return 'Loading...';
+    }
+    return aqiScore !== null 
+      ? `${temperature}° – ${getAQIDescription(aqiScore)}`
+      : `${temperature}°`;
+  };
 
   return (
     <InfoContainer>
-      <ClimateInfo onClick={handleClick}>{climateText}</ClimateInfo>
+      <ClimateInfo 
+        onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        className={!isInitialized ? 'loading' : ''}
+      >
+        {getClimateText()}
+      </ClimateInfo>
       <RoomName>{roomName}</RoomName>
     </InfoContainer>
   );

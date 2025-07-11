@@ -24,10 +24,9 @@ const ModalBox = styled.div<{ $isOpen: boolean }>`
   right: 0;
   height: 100vh;
   width: 460px;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(33, 37, 41, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   transform: translateX(${props => props.$isOpen ? '0' : '100%'});
   transition: transform 0.3s ease-in-out;
   z-index: 1000;
@@ -66,6 +65,8 @@ export default function ModalContainer() {
   };
 
   const renderModalContent = () => {
+    console.log('Rendering modal content:', modalState);
+    
     switch (modalState.type) {
       case 'light':
         return <LightModal entityId={modalState.entityId!} />;
@@ -73,8 +74,10 @@ export default function ModalContainer() {
         // TODO: Implement FanModal
         return <div>Fan Modal Coming Soon</div>;
       case 'climate':
-        // Parse the entityId to get room info - format: "roomName|tempSensor|humiditySensor|aqiSensor|co2Sensor|tvocSensor"
-        const [roomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor] = modalState.entityId!.split('|');
+        // Parse the entityId to get room info - format: "roomName|tempSensor|humiditySensor|aqiSensor|co2Sensor|tvocSensor|pm25Sensor"
+        const [roomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor] = modalState.entityId!.split('|');
+        console.log('Parsed climate modal data:', { roomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor });
+        
         return (
           <ClimateModal 
             roomName={roomName}
@@ -83,6 +86,7 @@ export default function ModalContainer() {
             aqiSensor={aqiSensor || undefined}
             co2Sensor={co2Sensor || undefined}
             tvocSensor={tvocSensor || undefined}
+            pm25Sensor={pm25Sensor || undefined}
           />
         );
       default:
@@ -92,7 +96,7 @@ export default function ModalContainer() {
 
   return (
     <>
-      <Backdrop $isOpen={modalState.isOpen} onClick={handleBackdropClick} />
+      {/* <Backdrop $isOpen={modalState.isOpen} onClick={handleBackdropClick} /> */}
       <ModalBox $isOpen={modalState.isOpen}>
         {modalState.isOpen && renderModalContent()}
       </ModalBox>

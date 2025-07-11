@@ -5,14 +5,15 @@ import { useEntityState } from '../../contexts/HassContext';
 import { useEntityHistory } from '../../hooks/useEntityHistory';
 import TemperatureChart from '../Charts/TemperatureChart';
 import HumidityChart from '../Charts/HumidityChart';
+import AQIChart from '../Charts/AQIChart';
 import DotIndicator from '../DotIndicator/DotIndicator';
+import { SensorBox, SensorContent, SensorTitle, SensorValue } from '../../styles/utils/sensors';
 
 const ModalContent = styled.div`
-  padding: 30px;
+  padding: 70px 45px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
 `;
 
 const Header = styled.div`
@@ -58,75 +59,49 @@ const TopSection = styled.div`
   margin-bottom: 30px;
 `;
 
-const SensorBox = styled.div`
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  text-align: center;
-`;
-
-const SensorHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const AQISection = styled(SensorBox)`
   padding: 20px;
-`;
-
-const SensorTitle = styled.h3`
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 15px 0;
-`;
-
-const SensorValue = styled.div`
-  font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  font-size: 32px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 20px;
-`;
-
-const AQISection = styled.div`
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 20px;
 `;
 
 const AQIHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 40px;
 `;
 
 const AQITitle = styled.h3`
   font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
-  color: #fff;
+  color: #F8F9FA;
   margin: 0;
 `;
 
 const AQIScore = styled.div<{ $score: number }>`
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: ${props => {
-    if (props.$score >= 80) return '#4CAF50'; // Good
-    if (props.$score >= 60) return '#FFC107'; // Fair
-    if (props.$score >= 40) return '#FF9800'; // Poor
-    return '#F44336'; // Bad
-  }};
+  font-size: 30px;
+  line-height: 30px;
+  font-weight: 400;
+  color: #F8F9FA;
+  margin-bottom: 5px;
 `;
 
 const DotGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0px;
 `;
+
+function getAQIDescription(score: number): string {
+  if (score >= 81) return 'Good';
+  if (score >= 61) return 'Acceptable';
+  if (score >= 41) return 'Moderate';
+  if (score >= 21) return 'Poor';
+  return 'Hazardous';
+}
 
 interface ClimateModalProps {
   roomName: string;
@@ -135,6 +110,7 @@ interface ClimateModalProps {
   aqiSensor?: string;
   co2Sensor?: string;
   tvocSensor?: string;
+  pm25Sensor?: string;
 }
 
 export default function ClimateModal({ 
@@ -143,7 +119,8 @@ export default function ClimateModal({
   humiditySensor, 
   aqiSensor, 
   co2Sensor, 
-  tvocSensor 
+  tvocSensor,
+  pm25Sensor 
 }: ClimateModalProps) {
   const { closeModal } = useModal();
   const tempEntity = useEntityState(tempSensor);
@@ -151,15 +128,18 @@ export default function ClimateModal({
   const aqiEntity = useEntityState(aqiSensor || '');
   const co2Entity = useEntityState(co2Sensor || '');
   const tvocEntity = useEntityState(tvocSensor || '');
+  const pm25Entity = useEntityState(pm25Sensor || '');
   
   const { data: tempHistory, loading: tempLoading, error: tempError } = useEntityHistory(tempSensor, 24);
   const { data: humidityHistory, loading: humidityLoading, error: humidityError } = useEntityHistory(humiditySensor || '', 24);
+  const { data: aqiHistory, loading: aqiLoading, error: aqiError } = useEntityHistory(aqiSensor || '', 24);
 
   const temperature = tempEntity?.state ? Math.round(parseFloat(tempEntity.state)) : '--';
   const humidity = humidityEntity?.state ? Math.round(parseFloat(humidityEntity.state)) : '--';
   const aqiScore = aqiEntity?.state ? Math.round(parseFloat(aqiEntity.state)) : null;
   const co2Value = co2Entity?.state ? Math.round(parseFloat(co2Entity.state)) : null;
   const tvocValue = tvocEntity?.state ? Math.round(parseFloat(tvocEntity.state)) : null;
+  const pm25Value = pm25Entity?.state ? Math.round(parseFloat(pm25Entity.state)) : null;
 
   return (
     <ModalContent>
@@ -170,10 +150,10 @@ export default function ClimateModal({
 
       <TopSection>
         <SensorBox>
-          <SensorHeader>
-            <SensorTitle>Temperature</SensorTitle>
+          <SensorContent>
             <SensorValue>{temperature}°</SensorValue>
-          </SensorHeader>
+            <SensorTitle>Temperature</SensorTitle>
+          </SensorContent>
           <TemperatureChart 
             data={tempHistory} 
             loading={tempLoading} 
@@ -183,8 +163,10 @@ export default function ClimateModal({
         </SensorBox>
 
         <SensorBox>
-          <SensorTitle>Humidity</SensorTitle>
-          <SensorValue>{humidity}%</SensorValue>
+          <SensorContent>
+            <SensorValue>{humidity}%</SensorValue>
+            <SensorTitle>Humidity</SensorTitle>            
+          </SensorContent>
           <HumidityChart 
             data={humidityHistory} 
             loading={humidityLoading} 
@@ -194,47 +176,63 @@ export default function ClimateModal({
       </TopSection>
 
       {aqiSensor && aqiScore !== null && (
-        <AQISection>
-          <AQIHeader>
-            <AQITitle>Air Quality Index</AQITitle>
-            <AQIScore $score={aqiScore}>{aqiScore}</AQIScore>
-          </AQIHeader>
-          
-          <DotGrid>
-            <DotIndicator
-              label="Temp"
-              value={temperature}
-              unit="°"
-              sensorType="temperature"
-              rawValue={tempEntity?.state ? parseFloat(tempEntity.state) : null}
-            />
-            <DotIndicator
-              label="Humidity"
-              value={humidity}
-              unit="%"
-              sensorType="humidity"
-              rawValue={humidityEntity?.state ? parseFloat(humidityEntity.state) : null}
-            />
-            {co2Sensor && (
+        <SensorBox>
+          <SensorContent>
+            <AQIHeader>
+              <AQIScore $score={aqiScore}>{aqiScore} – {getAQIDescription(aqiScore)}</AQIScore>
+              <AQITitle>Air Quality Index</AQITitle>
+            </AQIHeader>
+            
+            <DotGrid>
               <DotIndicator
-                label="CO2"
-                value={co2Value}
-                unit="ppm"
-                sensorType="co2"
-                rawValue={co2Value}
+                label="Temp"
+                value={temperature}
+                unit="°F"
+                sensorType="temperature"
+                rawValue={tempEntity?.state ? parseFloat(tempEntity.state) : null}
               />
-            )}
-            {tvocSensor && (
               <DotIndicator
-                label="TVOCs"
-                value={tvocValue}
-                unit="ppb"
-                sensorType="tvoc"
-                rawValue={tvocValue}
+                label="Humidity"
+                value={humidity}
+                unit="%"
+                sensorType="humidity"
+                rawValue={humidityEntity?.state ? parseFloat(humidityEntity.state) : null}
               />
-            )}
-          </DotGrid>
-        </AQISection>
+              {co2Sensor && (
+                <DotIndicator
+                  label="CO₂"
+                  value={co2Value}
+                  unit="ppm"
+                  sensorType="co2"
+                  rawValue={co2Value}
+                />
+              )}
+              {tvocSensor && (
+                <DotIndicator
+                  label="TVOCs"
+                  value={tvocValue}
+                  unit="ppb"
+                  sensorType="tvoc"
+                  rawValue={tvocValue}
+                />
+              )}
+              {pm25Sensor && (
+                <DotIndicator
+                  label="PM2.5"
+                  value={pm25Value}
+                  unit="μg/m³"
+                  sensorType="pm25"
+                  rawValue={pm25Value}
+                />
+              )}
+            </DotGrid>
+          </SensorContent>
+          <AQIChart 
+            data={aqiHistory} 
+            loading={aqiLoading} 
+            error={aqiError}
+          />
+        </SensorBox>
       )}
     </ModalContent>
   );
