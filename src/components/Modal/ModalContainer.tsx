@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useModal } from '../../contexts/ModalContext';
 import LightModal from './LightModal';
 import ClimateModal from './ClimateModal';
+import { LightScene } from '../DeviceCard/LightCard';
 
 const Backdrop = styled.div<{ $isOpen: boolean }>`
   position: fixed;
@@ -69,15 +70,52 @@ export default function ModalContainer() {
     
     switch (modalState.type) {
       case 'light':
-        // Parse the entityId to get light info - format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|..."
-        const lightParts = modalState.entityId!.split('|');
-        const lightRoomName = lightParts[0];
-        const lights = lightParts.slice(1).map(lightPart => {
+        // Parse the entityId to get light info - format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|...|SCENES|scene1Id:scene1Label:scene1Service:scene1ServiceData|..."
+        const allParts = modalState.entityId!.split('|');
+        console.log('Parsing light modal data:', allParts);
+        const lightRoomName = allParts[0];
+        
+        // Find the SCENES separator
+        const scenesIndex = allParts.indexOf('SCENES');
+        console.log('SCENES index:', scenesIndex);
+        
+        // Parse lights (everything before SCENES or all parts if no SCENES)
+        const lightEndIndex = scenesIndex !== -1 ? scenesIndex : allParts.length;
+        const lights = allParts.slice(1, lightEndIndex).map(lightPart => {
           const [entityId, name] = lightPart.split(':');
           return { entityId, name };
         });
+        console.log('Parsed lights:', lights);
         
-        return <LightModal roomName={lightRoomName} lights={lights} />;
+        // Parse scenes (everything after SCENES)
+        let scenes: LightScene[] = [];
+        if (scenesIndex !== -1) {
+          const sceneParts = allParts.slice(scenesIndex + 1);
+          console.log('Scene parts:', sceneParts);
+          
+          scenes = sceneParts.map(scenePart => {
+            const [id, label, service, serviceDataStr] = scenePart.split(':');
+            let serviceData = {};
+            try {
+              serviceData = serviceDataStr ? JSON.parse(serviceDataStr) : {};
+            } catch (e) {
+              console.warn('Failed to parse scene service data:', serviceDataStr);
+            }
+            
+            const scene = {
+              id,
+              label,
+              service,
+              serviceData,
+              icon: <div>🔆</div> // Placeholder icon - will be replaced by LightModal
+            };
+            console.log('Parsed scene:', scene);
+            return scene;
+          });
+        }
+        console.log('Final scenes array:', scenes);
+        
+        return <LightModal roomName={lightRoomName} lights={lights} scenes={scenes} />;
       case 'fan':
         // TODO: Implement FanModal
         return <div>Fan Modal Coming Soon</div>;

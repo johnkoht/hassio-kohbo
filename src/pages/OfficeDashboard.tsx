@@ -5,12 +5,15 @@ import OccupancyState from '../components/OccupancyState/OccupancyState';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import RoomInfo from '../components/RoomInfo/RoomInfo';
 import DeviceRow from '../components/DeviceRow/DeviceRow';
-import LightCard from '../components/DeviceCard/LightCard';
+import LightCard, { LightScene } from '../components/DeviceCard/LightCard';
 import FanCard from '../components/DeviceCard/FanCard';
 import OutletCard from '../components/DeviceCard/OutletCard';
 import DoorCard from '../components/DeviceCard/DoorCard';
 import WindowCard from '../components/DeviceCard/WindowCard';
 import { useEntityState } from '../contexts/HassContext';
+import { ReactComponent as BrightIcon } from '../assets/utils/lights_bright.svg';
+import { ReactComponent as DimmedIcon } from '../assets/utils/lights_dimmed.svg';
+import { ReactComponent as NightlightIcon } from '../assets/utils/lights_nightlight.svg';
 
 import officeBg from '../assets/room_bgs/office-bg.jpg';
 import autoIcon from '../assets/room_mode_icons/auto.svg';
@@ -33,11 +36,68 @@ export default function OfficeDashboard() {
   const roomState = useEntityState('input_select.office');
   const occupancy = useEntityState('input_boolean.office_occupied');
 
-  // Define all lights in this room (using multiple instances of office_lights for testing)
+  // Define all lights in this room
   const roomLights = [
     { entityId: 'light.office_lights', name: 'Ceiling Lights' },
     { entityId: 'light.office_el_gato_light', name: 'Desk Lamp' },
     { entityId: 'light.office_shelves', name: 'Office Shelves' },
+  ];
+
+  // Define scenes for Lutron Caseta lights (brightness-based)
+  const casetaScenes: LightScene[] = [
+    {
+      id: 'bright',
+      label: 'Bright White',
+      icon: <BrightIcon />,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 100, color_temp: 370 }
+    },
+    {
+      id: 'dimmed',
+      label: 'Dimmed',
+      icon: <DimmedIcon />,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 40, color_temp: 370 }
+    },
+    {
+      id: 'nightlight',
+      label: 'Nightlight',
+      icon: <NightlightIcon />,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 5, color_temp: 500 }
+    }
+  ];
+
+  // Define scenes for Philips Hue lights (color-capable)
+  const hueScenes: LightScene[] = [
+    {
+      id: 'bright',
+      label: 'Bright White',
+      icon: <BrightIcon />,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 100, color_temp: 250 }
+    },
+    {
+      id: 'focus',
+      label: 'Focus Blue',
+      icon: <div>🔵</div>,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 80, rgb_color: [100, 150, 255] }
+    },
+    {
+      id: 'relax',
+      label: 'Warm Relax',
+      icon: <div>🟠</div>,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 60, rgb_color: [255, 150, 100] }
+    },
+    {
+      id: 'nightlight',
+      label: 'Nightlight',
+      icon: <NightlightIcon />,
+      service: 'light/turn_on',
+      serviceData: { brightness_pct: 10, rgb_color: [255, 100, 50] }
+    }
   ];
 
   return (
@@ -67,18 +127,21 @@ export default function OfficeDashboard() {
               entityId="light.office_lights"
               name="Ceiling Lights"
               lightType="ceiling"
-              roomName="Office"
-              roomLights={roomLights}
+              // roomName="Office"
+              // roomLights={roomLights}
+              scenes={hueScenes}
             />
             <LightCard
               entityId="light.office_el_gato_light"
               name="Desk Lamp"
               lightType="lamp"
+              scenes={casetaScenes} // Lutron Caseta - brightness-based scenes
             />
             <LightCard
               entityId="light.office_shelves"
               name="Shelf Lights"
               lightType="lightstrip"
+              scenes={hueScenes} // Philips Hue - color-capable scenes
             />
             <FanCard 
               entityId="fan.office_air_purifier" 

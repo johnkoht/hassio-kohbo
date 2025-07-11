@@ -12,12 +12,21 @@ interface RoomLight {
   name: string;
 }
 
+export interface LightScene {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  service?: string; // Home Assistant service to call
+  serviceData?: Record<string, any>; // Additional service data
+}
+
 interface LightCardProps {
   entityId: string;
   name: string;
   lightType: 'ceiling' | 'lightstrip' | 'lamp';
   roomName?: string;
   roomLights?: RoomLight[];
+  scenes?: LightScene[]; // Available scenes for this light/room
 }
 
 function getLightStateString(entity: any): string {
@@ -52,7 +61,7 @@ function getLightIcon(lightType: 'ceiling' | 'lightstrip' | 'lamp') {
   }
 }
 
-export default function LightCard({ entityId, name, lightType, roomName, roomLights }: LightCardProps) {
+export default function LightCard({ entityId, name, lightType, roomName, roomLights, scenes }: LightCardProps) {
   const entity = useEntityState(entityId);
   const { openModal } = useModal();
 
@@ -64,16 +73,32 @@ export default function LightCard({ entityId, name, lightType, roomName, roomLig
   }
 
   function handleMoreOptions() {
+    // Create modal entityId format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|...|SCENES|scene1Id:scene1Label:scene1Service|scene2Id:scene2Label:scene2Service|..."
+    let modalEntityId = '';
+    
+    console.log('Opening light modal with:', { roomName, roomLights, scenes });
+    
     if (roomName && roomLights && roomLights.length > 1) {
-      // Create modal entityId format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|..."
       const lightParts = roomLights.map(light => `${light.entityId}:${light.name}`);
-      const modalEntityId = `${roomName}|${lightParts.join('|')}`;
-      openModal('light', modalEntityId);
+      modalEntityId = `${roomName}|${lightParts.join('|')}`;
     } else {
       // Fallback to single light format for backwards compatibility
-      const modalEntityId = `${roomName || 'Light'}|${entityId}:${name}`;
-      openModal('light', modalEntityId);
+      modalEntityId = `${roomName || 'Light'}|${entityId}:${name}`;
     }
+    
+    console.log('Base modal entity ID:', modalEntityId);
+    
+    // Add scenes if provided
+    if (scenes && scenes.length > 0) {
+      const sceneParts = scenes.map(scene => 
+        `${scene.id}:${scene.label}:${scene.service || ''}:${JSON.stringify(scene.serviceData || {})}`
+      );
+      modalEntityId += `|SCENES|${sceneParts.join('|')}`;
+      console.log('Scene parts:', sceneParts);
+    }
+    
+    console.log('Final modal entity ID:', modalEntityId);
+    openModal('light', modalEntityId);
   }
 
   return (
