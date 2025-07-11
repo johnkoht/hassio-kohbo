@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useModal } from '../../contexts/ModalContext';
 import LightModal from './LightModal';
 import ClimateModal from './ClimateModal';
+import FanModal from './FanModal';
 import { LightScene } from '../DeviceCard/LightCard';
 
 const Backdrop = styled.div<{ $isOpen: boolean }>`
@@ -117,8 +118,11 @@ export default function ModalContainer() {
         
         return <LightModal roomName={lightRoomName} lights={lights} scenes={scenes} />;
       case 'fan':
-        // TODO: Implement FanModal
-        return <div>Fan Modal Coming Soon</div>;
+        // Parse the entityId to get fan info - format: "entityId|name"
+        const [fanEntityId, fanName] = modalState.entityId!.split('|');
+        console.log('Parsing fan modal data:', { fanEntityId, fanName });
+        
+        return <FanModal entityId={fanEntityId} name={fanName} />;
       case 'climate':
         // Parse the entityId to get room info - format: "roomName|tempSensor|humiditySensor|aqiSensor|co2Sensor|tvocSensor|pm25Sensor"
         const [climateRoomName, tempSensor, humiditySensor, aqiSensor, co2Sensor, tvocSensor, pm25Sensor] = modalState.entityId!.split('|');

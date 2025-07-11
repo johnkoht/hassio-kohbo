@@ -2,6 +2,7 @@ import React from 'react';
 import DeviceCard from './DeviceCard';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { useEntityState } from '../../contexts/HassContext';
+import { useModal } from '../../contexts/ModalContext';
 import { ReactComponent as AirPurifierIcon } from '../../assets/device_icons/air_purifier.svg';
 
 interface FanCardProps {
@@ -30,12 +31,18 @@ function getFanStateString(entity: any): string {
 
 export default function FanCard({ entityId, name }: FanCardProps) {
   const entity = useEntityState(entityId);
+  const { openModal } = useModal();
 
   function toggleFan() {
     hassApiFetch(`/api/services/fan/turn_${entity?.state === 'on' ? 'off' : 'on'}`, {
       method: 'POST',
       body: JSON.stringify({ entity_id: entityId }),
     });
+  }
+
+  function handleMoreOptions() {
+    // Open fan modal with entityId and name
+    openModal('fan', `${entityId}|${name}`);
   }
 
   return (
@@ -45,7 +52,7 @@ export default function FanCard({ entityId, name }: FanCardProps) {
       state={getFanStateString(entity)}
       isActive={entity?.state === 'on'}
       onClick={toggleFan}
-      onMoreOptions={() => {}}
+      onMoreOptions={handleMoreOptions}
     />
   );
 } 
