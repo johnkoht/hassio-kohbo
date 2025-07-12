@@ -5,8 +5,12 @@ import { useEntityState } from '../../contexts/HassContext';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import VerticalSlider from '../VerticalSlider/VerticalSlider';
 import ActionGrid, { ActionItem } from '../ActionGrid/ActionGrid';
+import ModalHeader from './shared/ModalHeader';
 import { ReactComponent as FanIcon } from '../../assets/device_icons/fan.svg';
 import { ReactComponent as PowerIcon } from '../../assets/utils/power.svg';
+import { ReactComponent as FanAutoIcon } from '../../assets/utils/fan_auto.svg';
+import { ReactComponent as FanManualIcon } from '../../assets/utils/fan_manual.svg';
+import { ReactComponent as NightlightIcon } from '../../assets/utils/lights_nightlight.svg';
 
 const ModalContent = styled.div`
   padding: 35px;
@@ -15,32 +19,7 @@ const ModalContent = styled.div`
   flex-direction: column;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-`;
 
-const Title = styled.h2`
-  font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #fff;
-  margin: 0;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  opacity: 0.7;
-  &:hover {
-    opacity: 1;
-  }
-`;
 
 const Section = styled.div`
   margin-bottom: 40px;
@@ -109,10 +88,13 @@ interface FanModalProps {
 
 // Default preset modes for common air purifiers
 const defaultPresetModes: ActionItem[] = [
-  { id: 'auto', label: 'Auto', icon: <div>🔄</div> },
-  { id: 'sleep', label: 'Sleep', icon: <div>😴</div> },
-  { id: 'eco', label: 'Eco', icon: <div>🌱</div> },
-  { id: 'turbo', label: 'Turbo', icon: <div>💨</div> },
+  { id: 'auto', label: 'Auto', icon: <FanAutoIcon /> },
+  { id: 'manual', label: 'Manual', icon: <FanManualIcon /> },
+  { id: 'sleep', label: 'Sleep', icon: <NightlightIcon /> },
+  
+  // COMMENTED OUT - Other modes not currently displayed
+  // { id: 'eco', label: 'Eco', icon: <div>🌱</div> },
+  // { id: 'turbo', label: 'Turbo', icon: <div>💨</div> },
 ];
 
 export default function FanModal({ entityId, name }: FanModalProps) {
@@ -129,7 +111,14 @@ export default function FanModal({ entityId, name }: FanModalProps) {
   const currentSpeed = entity?.attributes?.percentage ?? 0;
 
   // Get available preset modes from entity or use defaults
-  const presetModes = entity?.attributes?.preset_modes || ['auto', 'sleep', 'eco', 'turbo'];
+  const allPresetModes = entity?.attributes?.preset_modes || ['auto', 'manual', 'sleep'];
+  
+  // Filter to only show the modes we want to display
+  const allowedModes = ['auto', 'manual', 'sleep'];
+  const presetModes = allPresetModes.filter((mode: string) => 
+    allowedModes.includes(mode.toLowerCase())
+  );
+  
   const currentPresetMode = entity?.attributes?.preset_mode;
   
   // Check if this device supports percentage control
@@ -162,7 +151,8 @@ export default function FanModal({ entityId, name }: FanModalProps) {
   
   // Get display percentage - use actual percentage or estimate from other attributes
   const getDisplayPercentage = () => {
-    if (currentPercentage !== null && currentPercentage !== undefined) {
+    // If device has a percentage value (manual mode), use it
+    if (currentPercentage !== null && currentPercentage !== undefined && !isInPresetMode) {
       return currentPercentage;
     }
     
@@ -175,21 +165,24 @@ export default function FanModal({ entityId, name }: FanModalProps) {
         case 'medium': return 50;
         case 'high': return 75;
         case 'turbo': return 100;
-        default: return 50; // Default to medium
+        default: return 15; // Default to low for unknown airflow
       }
     }
     
-    // Fallback based on preset mode
-    if (currentPresetMode) {
+    // Fallback based on preset mode when device is on
+    if (isOn && currentPresetMode) {
       switch (currentPresetMode.toLowerCase()) {
         case 'sleep': return 25;
-        case 'auto': return 50; // Default for auto
-        case 'manual': return 50;
-        default: return 50;
+        case 'auto': return 15; // Auto mode typically runs at low speed
+        case 'auto (plasmawave off)': return 15;
+        case 'manual': return 25; // Manual mode default to low
+        case 'manual (plasmawave off)': return 25;
+        default: return 15;
       }
     }
     
-    return 0;
+    // If device is off, show 0
+    return isOn ? 15 : 0;
   };
   
   const displayPercentage = getDisplayPercentage();
@@ -202,11 +195,13 @@ export default function FanModal({ entityId, name }: FanModalProps) {
     console.log('Preset modes:', entity?.attributes?.preset_modes);
     console.log('Current preset mode:', entity?.attributes?.preset_mode);
     console.log('Percentage:', entity?.attributes?.percentage);
+    console.log('Current percentage:', currentPercentage);
     console.log('Airflow:', entity?.attributes?.airflow);
-    console.log('Display percentage:', displayPercentage);
+    console.log('Is on:', isOn);
     console.log('Is in preset mode:', isInPresetMode);
+    console.log('Display percentage:', displayPercentage);
     console.log('Current speed level:', currentSpeedLevel);
-  }, [entity, displayPercentage, isInPresetMode, currentSpeedLevel]);
+  }, [entity, displayPercentage, isInPresetMode, currentSpeedLevel, currentPercentage, isOn]);
 
   // Convert preset modes to ActionItems
   const presetActions: ActionItem[] = presetModes.map((mode: string) => ({
@@ -260,6 +255,7 @@ export default function FanModal({ entityId, name }: FanModalProps) {
     
     try {
       console.log('Setting fan percentage to:', finalValue, `(${getSpeedLevel(finalValue)})`);
+      console.log('Current fan state - isOn:', isOn, 'isInPresetMode:', isInPresetMode);
       
       if (finalValue === 0) {
         // Turn off fan if speed is set to 0
@@ -268,7 +264,9 @@ export default function FanModal({ entityId, name }: FanModalProps) {
           body: JSON.stringify({ entity_id: entityId }),
         });
       } else {
-        // Set speed percentage - this will switch from preset mode to manual mode
+        // If fan is off, turn it on at the specified speed
+        // If fan is in preset mode, switch to manual mode at the specified speed
+        // This covers both scenarios: off->on and preset->manual
         await hassApiFetch('/api/services/fan/set_percentage', {
           method: 'POST',
           body: JSON.stringify({
@@ -286,7 +284,7 @@ export default function FanModal({ entityId, name }: FanModalProps) {
       console.error('Failed to set fan speed:', error);
       setIsUpdatingSpeed(false);
     }
-  }, [entityId, supportsPercentage, percentageStep, getSpeedLevel]);
+  }, [entityId, supportsPercentage, percentageStep, getSpeedLevel, isOn, isInPresetMode]);
 
   const handlePresetSelect = async (presetId: string) => {
     console.log('Preset selected:', presetId);
@@ -312,10 +310,12 @@ export default function FanModal({ entityId, name }: FanModalProps) {
 
   return (
     <ModalContent>
-      <Header>
-        <Title>{name}</Title>
-        <CloseButton onClick={closeModal}>×</CloseButton>
-      </Header>
+      <ModalHeader 
+        title={name}
+        onClose={closeModal}
+        centered={true}
+        marginBottom="40px"
+      />
 
       <Section>
         {supportsPercentage ? (
@@ -328,11 +328,11 @@ export default function FanModal({ entityId, name }: FanModalProps) {
                 value={displayPercentage}
                 onChange={handleSpeedChange}
                 onRelease={handleSpeedRelease}
-                disabled={!isOn || isInPresetMode}
+                disabled={false}
               />
             </SpeedContainer>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginTop: '5px' }}>
-              {isInPresetMode ? 'Preset Mode - Use buttons to change' : 'Manual Control - Drag to adjust'}
+              {isInPresetMode ? 'Preset Mode - Drag to switch to manual' : 'Manual Control - Drag to adjust'}
             </div>
           </>
         ) : (
@@ -347,7 +347,6 @@ export default function FanModal({ entityId, name }: FanModalProps) {
 
       {presetActions.length > 0 && (
         <Section>
-          <SectionTitle>Preset Modes</SectionTitle>
           <ActionGrid
             actions={presetActions}
             activeAction={activePreset}
@@ -363,31 +362,34 @@ export default function FanModal({ entityId, name }: FanModalProps) {
 function getPresetIcon(presetId: string) {
   switch (presetId.toLowerCase()) {
     case 'auto':
-      return <div>🔄</div>;
+      return <FanAutoIcon />;
     case 'auto (plasmawave off)':
-      return <div>🔄</div>; // Same as auto but could be distinguished
+      return <FanAutoIcon />; // Same as auto but could be distinguished
     case 'manual':
-      return <div>👤</div>; // Manual control
+      return <FanManualIcon />;
     case 'manual (plasmawave off)':
-      return <div>👤</div>; // Manual without plasma
+      return <FanManualIcon />; // Manual without plasma
     case 'sleep':
-      return <div>😴</div>;
-    case 'eco':
-    case 'green':
-      return <div>🌱</div>;
-    case 'turbo':
-    case 'high':
-    case 'max':
-      return <div>💨</div>;
-    case 'smart':
-      return <div>🧠</div>;
-    case 'quiet':
-    case 'silent':
-      return <div>🤫</div>;
-    case 'breeze':
-      return <div>🍃</div>;
-    case 'whoosh':
-      return <div>🌪️</div>;
+      return <NightlightIcon />;
+    
+    // COMMENTED OUT - Other modes not currently displayed
+    // case 'eco':
+    // case 'green':
+    //   return <div>🌱</div>;
+    // case 'turbo':
+    // case 'high':
+    // case 'max':
+    //   return <div>💨</div>;
+    // case 'smart':
+    //   return <div>🧠</div>;
+    // case 'quiet':
+    // case 'silent':
+    //   return <div>🤫</div>;
+    // case 'breeze':
+    //   return <div>🍃</div>;
+    // case 'whoosh':
+    //   return <div>🌪️</div>;
+    
     default:
       return <div>⚙️</div>; // Fallback icon
   }

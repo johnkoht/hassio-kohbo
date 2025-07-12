@@ -15,7 +15,7 @@ const ActionButton = styled.button<{ $isActive: boolean }>`
   align-items: center;
   gap: 8px;
   padding: 15px 10px;
-  background: ${props => props.$isActive ? 'rgba(173, 181, 189, 0.6)' : 'rgba(173, 181, 189, 0.4)'};
+  background: ${props => props.$isActive ? 'rgba(173, 181, 189, 0.6)' : 'rgba(173, 181, 189, 0.1)'};
   border: none;
   border-radius: 17px;
   cursor: pointer;

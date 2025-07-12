@@ -7,6 +7,7 @@ import TemperatureChart from '../Charts/TemperatureChart';
 import HumidityChart from '../Charts/HumidityChart';
 import AQIChart from '../Charts/AQIChart';
 import DotIndicator from '../DotIndicator/DotIndicator';
+import ModalHeader from './shared/ModalHeader';
 import { SensorBox, SensorContent, SensorTitle, SensorValue } from '../../styles/utils/sensors';
 
 const ModalContent = styled.div`
@@ -16,41 +17,7 @@ const ModalContent = styled.div`
   flex-direction: column;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-`;
 
-const Title = styled.h2`
-  font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #fff;
-  margin: 0;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  opacity: 0.7;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
-  }
-`;
 
 const TopSection = styled.div`
   display: grid;
@@ -143,10 +110,12 @@ export default function ClimateModal({
 
   return (
     <ModalContent>
-      <Header>
-        <Title>{roomName} Climate</Title>
-        <CloseButton onClick={closeModal}>×</CloseButton>
-      </Header>
+      <ModalHeader 
+        title={`${roomName} Climate`}
+        onClose={closeModal}
+        centered={true}
+        marginBottom="30px"
+      />
 
       <TopSection>
         <SensorBox>

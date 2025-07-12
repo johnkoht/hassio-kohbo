@@ -106,9 +106,11 @@ export default function DeviceCard({ icon, name, state, isActive = true, onClick
       </IconContainer>
       <Name>{name}</Name>
       <State>{state}</State>
-      <MoreOptions onClick={e => { e.stopPropagation(); onMoreOptions && onMoreOptions(); }}>
-        <img src={ellipsisIcon} alt="More Options" />
-      </MoreOptions>
+      {onMoreOptions && (
+        <MoreOptions onClick={e => { e.stopPropagation(); onMoreOptions(); }}>
+          <img src={ellipsisIcon} alt="More Options" />
+        </MoreOptions>
+      )}
     </Card>
   );
 } 

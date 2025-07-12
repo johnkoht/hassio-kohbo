@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type ModalType = 'light' | 'fan' | 'climate' | null;
+export type ModalType = 'light' | 'fan' | 'climate' | 'settings' | null;
 
 interface ModalState {
   type: ModalType;

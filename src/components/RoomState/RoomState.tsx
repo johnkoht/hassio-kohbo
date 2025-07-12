@@ -29,6 +29,7 @@ const Label = styled.span`
   font-size: 14px;
   font-weight: 500;
   color: #fff;
+  line-height: 14px;
 `;
 
 type Mode = 'Auto' | 'Bedtime' | 'DnD';

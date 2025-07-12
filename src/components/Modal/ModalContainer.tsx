@@ -4,6 +4,7 @@ import { useModal } from '../../contexts/ModalContext';
 import LightModal from './LightModal';
 import ClimateModal from './ClimateModal';
 import FanModal from './FanModal';
+import SettingsModal, { SettingsGroup } from './SettingsModal';
 import { LightScene } from '../DeviceCard/LightCard';
 
 const Backdrop = styled.div<{ $isOpen: boolean }>`
@@ -12,7 +13,6 @@ const Backdrop = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
@@ -248,6 +248,19 @@ export default function ModalContainer() {
             pm25Sensor={pm25Sensor || undefined}
           />
         );
+      case 'settings':
+        // Parse the entityId to get settings info - format: "roomName|settingsGroupsJSON"
+        const [settingsRoomName, settingsGroupsJSON] = modalState.entityId!.split('|');
+        console.log('Parsing settings modal data:', { settingsRoomName, settingsGroupsJSON });
+        
+        let settingsGroups: SettingsGroup[] = [];
+        try {
+          settingsGroups = JSON.parse(decodeURIComponent(settingsGroupsJSON));
+        } catch (e) {
+          console.error('Failed to parse settings groups:', e);
+        }
+        
+        return <SettingsModal roomName={settingsRoomName} settingsGroups={settingsGroups} />;
       default:
         return null;
     }
@@ -255,7 +268,7 @@ export default function ModalContainer() {
 
   return (
     <>
-      {/* <Backdrop $isOpen={modalState.isOpen} onClick={handleBackdropClick} /> */}
+      <Backdrop $isOpen={modalState.isOpen} onClick={handleBackdropClick} />
       <ModalBox 
         ref={modalRef}
         $isOpen={modalState.isOpen}

@@ -27,8 +27,6 @@ export default function DoorCard({ entityId, name }: DoorCardProps) {
       name={name}
       state={getDoorStateString(entity)}
       isActive={entity?.state === 'on' || entity?.state === 'open'}
-      // No onClick - door is not controllable
-      onMoreOptions={() => {}}
     />
   );
 } 

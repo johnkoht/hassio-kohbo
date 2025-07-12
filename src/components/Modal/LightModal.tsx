@@ -6,6 +6,7 @@ import { useEntityState } from '../../contexts/HassContext';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import VerticalSlider from '../VerticalSlider/VerticalSlider';
 import ActionGrid, { ActionItem } from '../ActionGrid/ActionGrid';
+import ModalHeader from './shared/ModalHeader';
 import { ReactComponent as LightIcon } from '../../assets/device_icons/light.svg';
 import { ReactComponent as LampIcon } from '../../assets/device_icons/lamp.svg';
 import { ReactComponent as LightstripIcon } from '../../assets/device_icons/shelf_lights.svg';
@@ -32,32 +33,7 @@ const ModalContent = styled.div`
   flex-direction: column;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-`;
 
-const Title = styled.h2`
-  font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #fff;
-  margin: 0;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  opacity: 0.7;
-  &:hover {
-    opacity: 1;
-  }
-`;
 
 const CarouselContainer = styled.div`
   flex: 1;
@@ -88,8 +64,6 @@ const ThumbnailContainer = styled.div`
   display: flex;
   gap: 8px;
   justify-content: center;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
 const Thumbnail = styled.button<{ $isActive: boolean; $isOn?: boolean }>`
@@ -99,31 +73,20 @@ const Thumbnail = styled.button<{ $isActive: boolean; $isOn?: boolean }>`
   gap: 6px;
   padding: 12px 16px;
   background: ${props => props.$isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border: none;
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 60px;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-    fill: ${props => props.$isOn ? '#4CAF50' : '#fff'};
-    opacity: ${props => props.$isOn ? 1 : 0.6};
-  }
 `;
 
 const ThumbnailLabel = styled.span`
   font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 10px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: #fff;
   text-align: center;
-  line-height: 1.2;
+  line-height: 12px;
 `;
 
 const Section = styled.div`
@@ -132,14 +95,6 @@ const Section = styled.div`
   flex-direction: column;
   gap: 10px;
   align-items: center;
-`;
-
-const SectionTitle = styled.h3`
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 20px 0;
 `;
 
 const PowerButton = styled.button<{ $isOn: boolean }>`
@@ -300,9 +255,11 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
     // Don't update brightness if we're in the middle of an optimistic update
     if (isUpdatingBrightness) return;
 
-    if (currentLight?.entity?.attributes?.brightness) {
+    if (currentLight?.entity?.state === 'on' && currentLight?.entity?.attributes?.brightness) {
       const newBrightness = Math.round(currentLight.entity.attributes.brightness / 2.55);
       setBrightness(newBrightness);
+    } else if (currentLight?.entity?.state === 'off') {
+      setBrightness(0);
     } else {
       setBrightness(100);
     }
@@ -403,13 +360,13 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
     <>
 
       <Section>
-        <BrightnessValue>{brightness}%</BrightnessValue>
+        <BrightnessValue>{isOn ? `${brightness}%` : 'Off'}</BrightnessValue>
         <BrightnessContainer>
           <VerticalSlider
             value={sliderValue}
             onChange={handleBrightnessChange}
             onRelease={handleBrightnessRelease}
-            disabled={!isOn}
+            hideHandle={!isOn}
           />
         </BrightnessContainer>
         <PowerButton $isOn={isOn} onClick={handleToggle}>
@@ -418,7 +375,6 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
       </Section>
 
       <Section>
-        <SectionTitle>Scenes</SectionTitle>
         <ActionGrid
           actions={sceneActions}
           activeAction={activeScene}
@@ -430,10 +386,11 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
 
   return (
     <ModalContent>
-      <Header>
-        <Title>{getSlideTitle()}</Title>
-        <CloseButton onClick={closeModal}>×</CloseButton>
-      </Header>
+      <ModalHeader 
+        title={getSlideTitle()}
+        centered={true}
+        marginBottom="20px"
+      />
 
       {lights.length > 1 ? (
         <CarouselContainer>
@@ -455,7 +412,6 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
                 $isOn={light.entity?.state === 'on'}
                 onClick={() => scrollTo(index)}
               >
-                {getLightIconByName(light.name)}
                 <ThumbnailLabel>{light.name}</ThumbnailLabel>
               </Thumbnail>
             ))}

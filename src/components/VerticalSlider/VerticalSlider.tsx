@@ -66,6 +66,7 @@ interface VerticalSliderProps {
   inverted?: boolean; // If true, 100% is at bottom, 0% is at top
   unit?: string; // e.g., '%', 'ft', etc.
   disabled?: boolean;
+  hideHandle?: boolean; // If true, hide the handle
 }
 
 export default function VerticalSlider({ 
@@ -74,7 +75,8 @@ export default function VerticalSlider({
   onRelease, 
   inverted = false, 
   unit = '%', 
-  disabled = false 
+  disabled = false,
+  hideHandle = false 
 }: VerticalSliderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(value);
@@ -219,7 +221,7 @@ export default function VerticalSlider({
       style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
     >
       <SliderTrack $fillHeight={fillHeight} $inverted={inverted} />
-      <SliderHandle $position={handlePosition} $inverted={inverted} />
+      {!hideHandle && <SliderHandle $position={handlePosition} $inverted={inverted} />}
     </SliderContainer>
   );
 } 

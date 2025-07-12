@@ -37,7 +37,6 @@ export default function OutletCard({ entityId, name }: OutletCardProps) {
       state={getOutletStateString(entity)}
       isActive={entity?.state === 'on'}
       onClick={toggleOutlet}
-      onMoreOptions={() => {}}
     />
   );
 } 

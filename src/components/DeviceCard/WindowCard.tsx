@@ -27,8 +27,6 @@ export default function WindowCard({ entityId, name }: WindowCardProps) {
       name={name}
       state={getWindowStateString(entity)}
       isActive={entity?.state === 'on' || entity?.state === 'open'}
-      // No onClick - window is not controllable
-      onMoreOptions={() => {}}
     />
   );
 } 
