@@ -7,6 +7,14 @@ const Bg = styled.div<{ bg: string }>`
   height: 100vh;
   background: url(${p => p.bg}) center/cover no-repeat;
   overflow: hidden;
+  
+  /* Prevent vertical overscroll bouncing while keeping horizontal swipes */
+  overscroll-behavior-y: none;
+  touch-action: pan-x;
+  
+  /* Additional mobile optimizations */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 `;
 
 const Overlay = styled.div`

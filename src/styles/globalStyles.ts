@@ -13,6 +13,10 @@ const GlobalStyle = createGlobalStyle`
     color: #fff;
     overflow-x: hidden;
     
+    /* Prevent vertical overscroll bouncing throughout the app */
+    overscroll-behavior-y: none;
+    overscroll-behavior: contain;
+    
     /* Remove mobile tap highlights globally */
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
