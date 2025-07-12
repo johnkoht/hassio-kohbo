@@ -10,6 +10,7 @@ import { ReactComponent as LightstripIcon } from '../../assets/device_icons/shel
 interface RoomLight {
   entityId: string;
   name: string;
+  displayName?: string; // Optional display name for UI - falls back to name if not provided
 }
 
 export interface LightScene {
@@ -79,11 +80,13 @@ export default function LightCard({ entityId, name, lightType, roomName, roomLig
     console.log('Opening light modal with:', { roomName, roomLights, scenes });
     
     if (roomName && roomLights && roomLights.length > 1) {
-      const lightParts = roomLights.map(light => `${light.entityId}:${light.name}`);
+      const lightParts = roomLights.map(light => 
+        `${light.entityId}:${light.name}:${light.displayName || ''}`
+      );
       modalEntityId = `${roomName}|${lightParts.join('|')}`;
     } else {
       // Fallback to single light format for backwards compatibility
-      modalEntityId = `${roomName || 'Light'}|${entityId}:${name}`;
+      modalEntityId = `${roomName || 'Light'}|${entityId}:${name}:`;
     }
     
     console.log('Base modal entity ID:', modalEntityId);

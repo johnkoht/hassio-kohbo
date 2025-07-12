@@ -192,8 +192,12 @@ export default function ModalContainer() {
         // Parse lights (everything before SCENES or all parts if no SCENES)
         const lightEndIndex = scenesIndex !== -1 ? scenesIndex : allParts.length;
         const lights = allParts.slice(1, lightEndIndex).map(lightPart => {
-          const [entityId, name] = lightPart.split(':');
-          return { entityId, name };
+          const [entityId, name, displayName] = lightPart.split(':');
+          return { 
+            entityId, 
+            name,
+            ...(displayName && displayName.trim() !== '' ? { displayName } : {})
+          };
         });
         console.log('Parsed lights:', lights);
         

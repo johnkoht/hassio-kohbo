@@ -145,6 +145,7 @@ const BrightnessValue = styled.div`
 interface LightEntity {
   entityId: string;
   name: string;
+  displayName?: string; // Optional display name for UI - falls back to name if not provided
 }
 
 interface LightModalProps {
@@ -350,7 +351,9 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
   };
 
   const getSlideTitle = () => {
-    return currentLight?.name || 'Light';
+    // Use displayName if provided, otherwise fall back to name
+    const displayName = currentLight?.displayName || currentLight?.name || 'Light';
+    return displayName;
   };
 
   // Use current brightness value for slider
@@ -412,7 +415,7 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
                 $isOn={light.entity?.state === 'on'}
                 onClick={() => scrollTo(index)}
               >
-                <ThumbnailLabel>{light.name}</ThumbnailLabel>
+                <ThumbnailLabel>{light.displayName || light.name}</ThumbnailLabel>
               </Thumbnail>
             ))}
           </ThumbnailContainer>

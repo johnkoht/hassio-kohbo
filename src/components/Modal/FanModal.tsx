@@ -104,8 +104,8 @@ export default function FanModal({ entityId, name }: FanModalProps) {
   const [isUpdatingSpeed, setIsUpdatingSpeed] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
 
-  // Determine if fan is on
-  const isOn = entity?.state === 'on';
+  // Determine if fan is on (could be 'on' or a preset mode like 'auto')
+  const isOn = entity?.state !== 'off';
 
   // Get current speed percentage (handle null case)
   const currentSpeed = entity?.attributes?.percentage ?? 0;
@@ -151,12 +151,17 @@ export default function FanModal({ entityId, name }: FanModalProps) {
   
   // Get display percentage - use actual percentage or estimate from other attributes
   const getDisplayPercentage = () => {
+    // FIRST: If device is off, always show 0 regardless of stored attributes
+    if (!isOn) {
+      return 0;
+    }
+    
     // If device has a percentage value (manual mode), use it
     if (currentPercentage !== null && currentPercentage !== undefined && !isInPresetMode) {
       return currentPercentage;
     }
     
-    // If in preset mode, try to estimate speed from other attributes
+    // If in preset mode and device is ON, try to estimate speed from other attributes
     // Check for airflow or other speed indicators
     const airflow = entity?.attributes?.airflow;
     if (airflow) {
@@ -170,7 +175,7 @@ export default function FanModal({ entityId, name }: FanModalProps) {
     }
     
     // Fallback based on preset mode when device is on
-    if (isOn && currentPresetMode) {
+    if (currentPresetMode) {
       switch (currentPresetMode.toLowerCase()) {
         case 'sleep': return 25;
         case 'auto': return 15; // Auto mode typically runs at low speed
@@ -181,27 +186,12 @@ export default function FanModal({ entityId, name }: FanModalProps) {
       }
     }
     
-    // If device is off, show 0
-    return isOn ? 15 : 0;
+    // Default for unknown on state
+    return 15;
   };
   
   const displayPercentage = getDisplayPercentage();
   const currentSpeedLevel = getSpeedLevel(displayPercentage);
-
-  // Debug logging for Winix entity
-  React.useEffect(() => {
-    console.log('FanModal entity data:', entity);
-    console.log('Entity attributes:', entity?.attributes);
-    console.log('Preset modes:', entity?.attributes?.preset_modes);
-    console.log('Current preset mode:', entity?.attributes?.preset_mode);
-    console.log('Percentage:', entity?.attributes?.percentage);
-    console.log('Current percentage:', currentPercentage);
-    console.log('Airflow:', entity?.attributes?.airflow);
-    console.log('Is on:', isOn);
-    console.log('Is in preset mode:', isInPresetMode);
-    console.log('Display percentage:', displayPercentage);
-    console.log('Current speed level:', currentSpeedLevel);
-  }, [entity, displayPercentage, isInPresetMode, currentSpeedLevel, currentPercentage, isOn]);
 
   // Convert preset modes to ActionItems
   const presetActions: ActionItem[] = presetModes.map((mode: string) => ({
@@ -321,7 +311,7 @@ export default function FanModal({ entityId, name }: FanModalProps) {
         {supportsPercentage ? (
           <>
             <SpeedValue>
-              {isInPresetMode ? currentPresetMode : currentSpeedLevel}
+              {!isOn ? 'Off' : (isInPresetMode ? currentPresetMode : currentSpeedLevel)}
             </SpeedValue>
             <SpeedContainer>
               <VerticalSlider
@@ -329,15 +319,15 @@ export default function FanModal({ entityId, name }: FanModalProps) {
                 onChange={handleSpeedChange}
                 onRelease={handleSpeedRelease}
                 disabled={false}
+                hideHandle={!isOn}
               />
             </SpeedContainer>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginTop: '5px' }}>
-              {isInPresetMode ? 'Preset Mode - Drag to switch to manual' : 'Manual Control - Drag to adjust'}
             </div>
           </>
         ) : (
           <SpeedValue>
-            {isInPresetMode ? `Preset: ${currentPresetMode}` : 'Manual Control'}
+            {!isOn ? 'Off' : (isInPresetMode ? `Preset: ${currentPresetMode}` : 'Manual Control')}
           </SpeedValue>
         )}
         <PowerButton $isOn={isOn} onClick={handleToggle}>
