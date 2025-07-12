@@ -19,7 +19,7 @@ import { ReactComponent as NightlightIcon } from '../assets/utils/lights_nightli
 import { ReactComponent as LeakIcon } from '../assets/device_icons/leak_dry.svg';
 
 // Using office background as placeholder - TODO: Add kitchen background image
-import kitchenBg from '../assets/room_bgs/office-bg.jpg';
+import kitchenBg from '../assets/room_bgs/kitchen-bg.jpg';
 import autoIcon from '../assets/room_mode_icons/auto.svg';
 import bedtimeIcon from '../assets/room_mode_icons/bedtime.svg';
 import dndIcon from '../assets/room_mode_icons/dnd.svg';
