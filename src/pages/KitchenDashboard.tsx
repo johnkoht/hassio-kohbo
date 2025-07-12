@@ -69,11 +69,11 @@ export default function KitchenDashboard() {
           entityType: 'switch'
         },
         {
-          id: 'leak_detection',
-          label: 'Leak Detection Alerts',
-          description: 'Enable leak detection alerts for the kitchen sink',
-          entityId: 'input_boolean.kitchen_leak_detection_alerts',
-          entityType: 'input_boolean'
+          id: 'adaptive_lighting_sleep_mode',
+          label: 'Adaptive Lighting Sleep Mode',
+          description: 'Automatically adjust light color temperature based on time of day for sleep mode',
+          entityId: 'switch.adaptive_lighting_sleep_mode_kitchen',
+          entityType: 'switch'
         }
       ]
     },
@@ -85,14 +85,28 @@ export default function KitchenDashboard() {
           id: 'air_quality_detections',
           label: 'Air Quality Automations',
           description: 'Enable air quality automations within the Kitchen',
-          entityId: 'automation.kitchen_air_quality_detections',
+          entityId: 'automation.kitchen_air_quality_sensor_detections',
           entityType: 'automation'
         },
         {
-          id: 'cooking_mode',
-          label: 'Cooking Mode Automation',
-          description: 'Enable cooking mode automations',
-          entityId: 'automation.kitchen_cooking_mode',
+          id: 'vacuum_clean_kitchen_and_family_room_at_night',
+          label: 'Clean Kitchen and Family Room at Night',
+          description: 'Clean the kitchen and family room at night',
+          entityId: 'automation.vacuum_clean_kitchen_and_family_room_at_night',
+          entityType: 'automation'
+        },
+        {
+          id: 'vacuum_clean_kitchen_when_unoccupied',
+          label: 'Clean Kitchen when House is Unoccupied',
+          description: 'Clean the kitchen when the house is unoccupied',
+          entityId: 'automation.vacuum_clean_kitchen_when_unoccupied',
+          entityType: 'automation'
+        },
+        {
+          id: 'vacuum_clean_kitchen_during_nap',
+          label: 'Clean Kitchen during Nap',
+          description: 'Clean the kitchen during nap time',
+          entityId: 'automation.vacuum_clean_kitchen_during_nap',
           entityType: 'automation'
         }
       ]
