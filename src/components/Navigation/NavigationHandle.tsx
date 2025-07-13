@@ -8,10 +8,6 @@ const HandleContainer = styled.div`
   left: 0;
   right: 0;
   height: 40px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 999;
   display: flex;
   align-items: center;

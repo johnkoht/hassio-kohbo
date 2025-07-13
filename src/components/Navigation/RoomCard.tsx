@@ -8,12 +8,12 @@ const CardContainer = styled.div<{ $backgroundImage?: string }>`
   position: relative;
   width: 100%;
   height: 200px;
-  border-radius: 20px;
   overflow: hidden;
   background: ${props => props.$backgroundImage 
     ? `url(${require(`../../assets/room_bgs/${props.$backgroundImage}`)}) center/cover no-repeat`
     : 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)'
   };
+  filter: drop-shadow(0px 2px 10px #212529);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   
@@ -27,13 +27,15 @@ const CardContainer = styled.div<{ $backgroundImage?: string }>`
   }
 `;
 
+
 const Overlay = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+  /* background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%); */
+  background: rgba(33, 37, 41, 0.7);
+  backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding: 20px;
 `;
 
@@ -46,21 +48,32 @@ const TopSection = styled.div`
 const OccupancyStatus = styled.div<{ $isOccupied: boolean }>`
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  gap: 6px;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: ${props => props.$isOccupied ? '#FFF' : '#ADB5BD'};
 `;
 
 const OccupancyDot = styled.div<{ $isOccupied: boolean }>`
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: ${props => props.$isOccupied ? '#22c55e' : '#64748b'};
+  background: ${props => props.$isOccupied ? '#22c55e' : '#6C757D'};
   box-shadow: ${props => props.$isOccupied ? '0 0 8px rgba(34, 197, 94, 0.5)' : 'none'};
+`;
+
+const MiddleSection = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+const RoomInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 `;
 
 const ClimateInfo = styled.div`
@@ -72,12 +85,11 @@ const ClimateInfo = styled.div`
 
 const RoomName = styled.h3`
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 40px;
+  line-height: 40px;
+  font-weight: 400;
   color: #fff;
   margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
 `;
 
 const UnavailableOverlay = styled.div`
@@ -139,12 +151,16 @@ export default function RoomCard({ room, onClick }: RoomCardProps) {
               {isOccupied ? 'Occupied' : 'Empty'}
             </OccupancyStatus>
           )}
-          <ClimateInfo>
-            {getClimateText()}
-          </ClimateInfo>
         </TopSection>
         
-        <RoomName>{room.displayName}</RoomName>
+        <MiddleSection>
+          <RoomInfo>
+            <ClimateInfo>
+              {getClimateText()}
+            </ClimateInfo>
+            <RoomName>{room.displayName}</RoomName>
+          </RoomInfo>
+        </MiddleSection>
       </Overlay>
       
       {!room.hasPage && (
