@@ -6,7 +6,7 @@ import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import RoomInfo from '../components/RoomInfo/RoomInfo';
 import DeviceRow from '../components/DeviceRow/DeviceRow';
 import LightCard, { LightScene } from '../components/DeviceCard/LightCard';
-import DeviceCard from '../components/DeviceCard/DeviceCard';
+import ThermostatCard from '../components/DeviceCard/ThermostatCard';
 import SettingsButton from '../components/SettingsButton/SettingsButton';
 import { SettingsGroup } from '../components/Modal/SettingsModal';
 import { useEntityState } from '../contexts/HassContext';
@@ -151,6 +151,11 @@ export default function FamilyRoomDashboard() {
               roomName="Family Room"
               roomLights={roomLights}
               scenes={familyRoomScenes}
+            />
+            <ThermostatCard
+              entityId="climate.nest_main_floor"
+              name="Thermostat"
+              type="hvac"
             />
             {/* TODO: Add TV cards when TV card component is created
             <DeviceCard

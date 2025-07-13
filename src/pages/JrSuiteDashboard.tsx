@@ -8,6 +8,7 @@ import LightCard, { LightScene } from '../components/DeviceCard/LightCard';
 import DoorCard from '../components/DeviceCard/DoorCard';
 import OutletCard from '../components/DeviceCard/OutletCard';
 import FanCard from '../components/DeviceCard/FanCard';
+import ThermostatCard from '../components/DeviceCard/ThermostatCard';
 import SettingsButton from '../components/SettingsButton/SettingsButton';
 import { SettingsGroup } from '../components/Modal/SettingsModal';
 import { useEntityState } from '../contexts/HassContext';
@@ -164,6 +165,11 @@ export default function JrSuiteDashboard() {
             <DoorCard 
               entityId="binary_sensor.jr_suite_door_status" 
               name="Door"
+            />
+            <ThermostatCard
+              entityId="climate.jr_suite"
+              name="Radiant Heat"
+              type="radiant"
             />
           </DeviceRow>
         </div>
