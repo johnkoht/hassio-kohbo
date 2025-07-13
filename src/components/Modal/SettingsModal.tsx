@@ -88,7 +88,7 @@ const SettingDescription = styled.div`
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.3;
-  max-width: 300px;
+  max-width: 280px;
 `;
 
 const SettingState = styled.div`

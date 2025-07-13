@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import OfficeDashboard from './pages/OfficeDashboard';
 import KitchenDashboard from './pages/KitchenDashboard';
 import PlayroomDashboard from './pages/PlayroomDashboard';
+import FamilyRoomDashboard from './pages/FamilyRoomDashboard';
+import JrSuiteDashboard from './pages/JrSuiteDashboard';
+import FoyerDashboard from './pages/FoyerDashboard';
+import MainBedroomDashboard from './pages/MainBedroomDashboard';
 import GlobalStyle from './styles/globalStyles';
 import { HassProvider } from './contexts/HassContext';
 import { ModalProvider } from './contexts/ModalContext';
@@ -10,6 +14,7 @@ import { NavigationProvider } from './contexts/NavigationContext';
 import ModalContainer from './components/Modal/ModalContainer';
 import NavigationContainer from './components/Navigation/NavigationContainer';
 import NavigationHandle from './components/Navigation/NavigationHandle';
+
 
 function App() {
   return (
@@ -22,6 +27,10 @@ function App() {
               <Route path="/office" element={<OfficeDashboard />} />
               <Route path="/kitchen" element={<KitchenDashboard />} />
               <Route path="/playroom" element={<PlayroomDashboard />} />
+              <Route path="/family-room" element={<FamilyRoomDashboard />} />
+              <Route path="/jr-suite" element={<JrSuiteDashboard />} />
+              <Route path="/foyer" element={<FoyerDashboard />} />
+              <Route path="/main-bedroom" element={<MainBedroomDashboard />} />
               <Route path="/" element={<Navigate to="/kitchen" replace />} />
             </Routes>
             <ModalContainer />

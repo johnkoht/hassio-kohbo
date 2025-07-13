@@ -415,7 +415,7 @@ export default function LightModal({ roomName, lights, scenes }: LightModalProps
                 $isOn={light.entity?.state === 'on'}
                 onClick={() => scrollTo(index)}
               >
-                <ThumbnailLabel>{light.displayName || light.name}</ThumbnailLabel>
+                <ThumbnailLabel>{light.name || light.displayName}</ThumbnailLabel>
               </Thumbnail>
             ))}
           </ThumbnailContainer>

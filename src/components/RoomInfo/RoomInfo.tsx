@@ -57,7 +57,7 @@ const ClimateInfo = styled.div`
 
 interface RoomInfoProps {
   roomName: string;
-  tempSensor: string;
+  tempSensor?: string;
   aqiSensor?: string;
   humiditySensor?: string;
   co2Sensor?: string;
@@ -84,7 +84,7 @@ export default function RoomInfo({
 }: RoomInfoProps) {
   const { openModal } = useModal();
   const { isConnected, isInitialized } = useHassConnection();
-  const tempEntity = useEntityState(tempSensor);
+  const tempEntity = useEntityState(tempSensor || '');
   const aqiEntity = useEntityState(aqiSensor || '');
 
   const temperature = tempEntity?.state ? Math.round(parseFloat(tempEntity.state)) : '--';
@@ -138,20 +138,30 @@ export default function RoomInfo({
     if (!isInitialized) {
       return 'Loading...';
     }
+    
+    // If no temperature sensor is provided, don't show climate info
+    if (!tempSensor) {
+      return null;
+    }
+    
     return aqiScore !== null 
       ? `${temperature}° – ${getAQIDescription(aqiScore)}`
       : `${temperature}°`;
   };
 
+  const climateText = getClimateText();
+
   return (
     <InfoContainer>
-      <ClimateInfo 
-        onClick={handleClick}
-        onTouchStart={handleTouchStart}
-        className={!isInitialized ? 'loading' : ''}
-      >
-        {getClimateText()}
-      </ClimateInfo>
+      {climateText && (
+        <ClimateInfo 
+          onClick={handleClick}
+          onTouchStart={handleTouchStart}
+          className={!isInitialized ? 'loading' : ''}
+        >
+          {climateText}
+        </ClimateInfo>
+      )}
       <RoomName>{roomName}</RoomName>
     </InfoContainer>
   );

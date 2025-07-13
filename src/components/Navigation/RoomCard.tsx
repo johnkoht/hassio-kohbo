@@ -45,22 +45,58 @@ const TopSection = styled.div`
   gap: 8px;
 `;
 
-const OccupancyStatus = styled.div<{ $isOccupied: boolean }>`
+type OccupancyDisplayState = 'Occupied' | 'Empty' | 'Do Not Disturb' | 'Bedtime';
+
+const OccupancyStatus = styled.div<{ $state: OccupancyDisplayState }>`
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: ${props => props.$isOccupied ? '#FFF' : '#ADB5BD'};
+  color: ${props => {
+    switch (props.$state) {
+      case 'Occupied':
+      case 'Do Not Disturb':
+      case 'Bedtime':
+        return '#FFF';
+      case 'Empty':
+      default:
+        return '#ADB5BD';
+    }
+  }};
 `;
 
-const OccupancyDot = styled.div<{ $isOccupied: boolean }>`
+const OccupancyDot = styled.div<{ $state: OccupancyDisplayState }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: ${props => props.$isOccupied ? '#22c55e' : '#6C757D'};
-  box-shadow: ${props => props.$isOccupied ? '0 0 8px rgba(34, 197, 94, 0.5)' : 'none'};
+  background: ${props => {
+    switch (props.$state) {
+      case 'Occupied':
+        return '#22c55e'; // Green
+      case 'Empty':
+        return '#6C757D'; // Gray
+      case 'Do Not Disturb':
+        return '#dc2626'; // Red
+      case 'Bedtime':
+        return '#ea580c'; // Orange
+      default:
+        return '#6C757D';
+    }
+  }};
+  box-shadow: ${props => {
+    switch (props.$state) {
+      case 'Occupied':
+        return '0 0 8px rgba(34, 197, 94, 0.5)';
+      case 'Do Not Disturb':
+        return '0 0 8px rgba(220, 38, 38, 0.5)';
+      case 'Bedtime':
+        return '0 0 8px rgba(234, 88, 12, 0.5)';
+      default:
+        return 'none';
+    }
+  }};
 `;
 
 const MiddleSection = styled.div`
@@ -111,15 +147,35 @@ interface RoomCardProps {
   onClick?: () => void;
 }
 
+function getOccupancyDisplayState(
+  occupancyEntity: any, 
+  roomStateEntity: any
+): OccupancyDisplayState {
+  const roomState = roomStateEntity?.state;
+  const isOccupied = occupancyEntity?.state === 'on';
+
+  // If room is in DnD or Bedtime mode, show that instead of occupancy
+  if (roomState === 'DnD') {
+    return 'Do Not Disturb';
+  }
+  if (roomState === 'Bedtime') {
+    return 'Bedtime';
+  }
+
+  // Otherwise, show normal occupancy state
+  return isOccupied ? 'Occupied' : 'Empty';
+}
+
 export default function RoomCard({ room, onClick }: RoomCardProps) {
   const navigate = useNavigate();
   const tempEntity = useEntityState(room.tempSensor || '');
   const aqiEntity = useEntityState(room.aqiSensor || '');
   const occupancyEntity = useEntityState(room.occupancySensor || '');
+  const roomStateEntity = useEntityState(room.roomStateSensor || '');
 
   const temperature = tempEntity?.state ? Math.round(parseFloat(tempEntity.state)) : '--';
   const aqiScore = aqiEntity?.state ? Math.round(parseFloat(aqiEntity.state)) : null;
-  const isOccupied = occupancyEntity?.state === 'on';
+  const occupancyState = getOccupancyDisplayState(occupancyEntity, roomStateEntity);
 
   const handleClick = () => {
     if (onClick) {
@@ -146,18 +202,20 @@ export default function RoomCard({ room, onClick }: RoomCardProps) {
       <Overlay>
         <TopSection>
           {room.occupancySensor && (
-            <OccupancyStatus $isOccupied={isOccupied}>
-              <OccupancyDot $isOccupied={isOccupied} />
-              {isOccupied ? 'Occupied' : 'Empty'}
+            <OccupancyStatus $state={occupancyState}>
+              <OccupancyDot $state={occupancyState} />
+              {occupancyState}
             </OccupancyStatus>
           )}
         </TopSection>
         
         <MiddleSection>
           <RoomInfo>
-            <ClimateInfo>
-              {getClimateText()}
-            </ClimateInfo>
+            {room.tempSensor && (
+              <ClimateInfo>
+                {getClimateText()}
+              </ClimateInfo>
+            )}
             <RoomName>{room.displayName}</RoomName>
           </RoomInfo>
         </MiddleSection>
