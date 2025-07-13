@@ -7,6 +7,7 @@ import RoomInfo from '../components/RoomInfo/RoomInfo';
 import DeviceRow from '../components/DeviceRow/DeviceRow';
 import LightCard, { LightScene } from '../components/DeviceCard/LightCard';
 import ThermostatCard from '../components/DeviceCard/ThermostatCard';
+import TVCard from '../components/DeviceCard/TVCard';
 import SettingsButton from '../components/SettingsButton/SettingsButton';
 import { SettingsGroup } from '../components/Modal/SettingsModal';
 import { useEntityState } from '../contexts/HassContext';
@@ -14,7 +15,6 @@ import { hassApiFetch } from '../api/hassApiFetch';
 import { ReactComponent as BrightIcon } from '../assets/utils/lights_bright.svg';
 import { ReactComponent as DimmedIcon } from '../assets/utils/lights_dimmed.svg';
 import { ReactComponent as NightlightIcon } from '../assets/utils/lights_nightlight.svg';
-import { ReactComponent as TVIcon } from '../assets/device_icons/plug.svg'; // Using plug icon as placeholder for TV
 
 import familyRoomBg from '../assets/room_bgs/family_room.jpg';
 import autoIcon from '../assets/room_mode_icons/auto.svg';
@@ -100,18 +100,6 @@ export default function FamilyRoomDashboard() {
     }
   ];
 
-  function getTVStateString(entity: any): string {
-    if (!entity) return '--';
-    const { state } = entity;
-    
-    if (state === 'playing') return 'Playing';
-    if (state === 'paused') return 'Paused';
-    if (state === 'idle') return 'Idle';
-    if (state === 'off') return 'Off';
-    
-    return state.charAt(0).toUpperCase() + state.slice(1);
-  }
-
   // function toggleTV(entityId: string) {
   //   const entity = useEntityState(entityId);
   //   const service = entity?.state === 'off' ? 'media_player/turn_on' : 'media_player/turn_off';
@@ -157,22 +145,14 @@ export default function FamilyRoomDashboard() {
               name="Thermostat"
               type="hvac"
             />
-            {/* TODO: Add TV cards when TV card component is created
-            <DeviceCard
-              icon={<TVIcon />}
+            <TVCard
+              entityId="media_player.sony_bravia_tv"
               name="Sony TV"
-              state={getTVStateString(sonyTV)}
-              isActive={sonyTV?.state !== 'off'}
-              onClick={() => toggleTV('media_player.sony_bravia_tv')}
             />
-            <DeviceCard
-              icon={<TVIcon />}
+            <TVCard
+              entityId="media_player.master_bedroom"
               name="Master Bedroom TV"
-              state={getTVStateString(masterBedroomTV)}
-              isActive={masterBedroomTV?.state !== 'off'}
-              onClick={() => toggleTV('media_player.master_bedroom')}
             />
-            */}
           </DeviceRow>
         </div>
         

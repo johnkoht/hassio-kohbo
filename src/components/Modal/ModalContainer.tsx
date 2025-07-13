@@ -4,6 +4,7 @@ import { useModal } from '../../contexts/ModalContext';
 import LightModal from './LightModal';
 import ClimateModal from './ClimateModal';
 import FanModal from './FanModal';
+import TVModal from './TVModal';
 import SettingsModal, { SettingsGroup } from './SettingsModal';
 import { LightScene } from '../DeviceCard/LightCard';
 
@@ -252,6 +253,12 @@ export default function ModalContainer() {
             pm25Sensor={pm25Sensor || undefined}
           />
         );
+      case 'tv':
+        // Parse the entityId to get TV info - format: "entityId|name"
+        const [tvEntityId, tvName] = modalState.entityId!.split('|');
+        console.log('Parsing TV modal data:', { tvEntityId, tvName });
+        
+        return <TVModal entityId={tvEntityId} name={tvName} />;
       case 'settings':
         // Parse the entityId to get settings info - format: "roomName|settingsGroupsJSON"
         const [settingsRoomName, settingsGroupsJSON] = modalState.entityId!.split('|');
