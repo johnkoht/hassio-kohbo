@@ -66,7 +66,7 @@ export const roomsData: RoomData[] = [
     occupancySensor: 'input_boolean.playroom_occupied',
     roomStateSensor: 'input_select.playroom',
     backgroundImage: 'playroom.jpg',
-    hasPage: false,
+    hasPage: true,
   },
   {
     id: 'jr_suite',
