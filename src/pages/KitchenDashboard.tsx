@@ -9,7 +9,6 @@ import LightCard, { LightScene } from '../components/DeviceCard/LightCard';
 import FanCard from '../components/DeviceCard/FanCard';
 import DoorCard from '../components/DeviceCard/DoorCard';
 import WindowCard from '../components/DeviceCard/WindowCard';
-import DeviceCard from '../components/DeviceCard/DeviceCard';
 import SettingsButton from '../components/SettingsButton/SettingsButton';
 import { SettingsGroup } from '../components/Modal/SettingsModal';
 import { useEntityState } from '../contexts/HassContext';
@@ -17,6 +16,7 @@ import { ReactComponent as BrightIcon } from '../assets/utils/lights_bright.svg'
 import { ReactComponent as DimmedIcon } from '../assets/utils/lights_dimmed.svg';
 import { ReactComponent as NightlightIcon } from '../assets/utils/lights_nightlight.svg';
 import { ReactComponent as LeakIcon } from '../assets/device_icons/leak_dry.svg';
+import LeakSensorCard from '../components/DeviceCard/LeakSensorCard';
 
 // Using office background as placeholder - TODO: Add kitchen background image
 import kitchenBg from '../assets/room_bgs/kitchen-bg.jpg';
@@ -192,11 +192,10 @@ export default function KitchenDashboard() {
               entityId="binary_sensor.kitchen_window_west_middle_sensor"
               name="Window West"
             />
-            <DeviceCard
-              icon={<LeakIcon />}
+            <LeakSensorCard
+              entityId="binary_sensor.kitchen_sink_leak_sensor"
               name="Sink Leak Sensor"
-              state={leakSensor?.state === 'on' ? 'Leak Detected' : 'Dry'}
-              isActive={leakSensor?.state === 'on'}
+              state={leakSensor?.state}
             />
           </DeviceRow>
         </div>

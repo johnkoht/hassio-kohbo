@@ -1,5 +1,9 @@
 import React from 'react';
-import DeviceCard from './DeviceCard';
+import { 
+  DeviceCard, 
+  DeviceCardIcon, 
+  DeviceCardInfo 
+} from './shared';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { useEntityState } from '../../contexts/HassContext';
 import { ReactComponent as PlugIcon } from '../../assets/device_icons/plug.svg';
@@ -32,11 +36,16 @@ export default function OutletCard({ entityId, name }: OutletCardProps) {
 
   return (
     <DeviceCard
-      icon={<PlugIcon />}
-      name={name}
-      state={getOutletStateString(entity)}
       isActive={entity?.state === 'on'}
       onClick={toggleOutlet}
-    />
+    >
+      <DeviceCardIcon>
+        <PlugIcon />
+      </DeviceCardIcon>
+      <DeviceCardInfo
+        name={name}
+        state={getOutletStateString(entity)}
+      />
+    </DeviceCard>
   );
 } 

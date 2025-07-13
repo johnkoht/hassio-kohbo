@@ -1,5 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
+import {
+  DeviceCard,
+  DeviceCardIcon,
+  DeviceCardInfo,
+  DeviceCardActions
+} from './shared';
 import { useEntityState } from '../../contexts/HassContext';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { ReactComponent as HeatIcon } from '../../assets/device_icons/hvac_heating.svg';
@@ -10,113 +15,6 @@ import { ReactComponent as HeaterIcon } from '../../assets/device_icons/heater.s
 import { ReactComponent as ThermostatIncreaseIcon } from '../../assets/device_icons/thermostat_increase.svg';
 import { ReactComponent as ThermostatDecreaseIcon } from '../../assets/device_icons/thermostat_decrease.svg';
 
-const Card = styled.div<{ $isActive: boolean }>`
-  width: 220px;
-  height: 150px;
-  background: radial-gradient(68.86% 108.57% at 29.04% 31.2%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%), rgba(233, 236, 239, ${props => props.$isActive ? '0.4' : '0.005'});  
-  backdrop-filter: blur(5px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 30px 20px;
-  position: relative;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  outline: none;
-  transform: scale(1);
-  
-  /* Disable mobile tap highlights */
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  
-  &:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
-  }
-  
-  &:focus {
-    outline: none;
-  }
-  
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
-const IconContainer = styled.div`
-  width: 40px;
-  height: 35px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin-bottom: 21px;
-`;
-
-const Name = styled.div`
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #fff;
-  margin-bottom: 8px;
-`;
-
-const State = styled.div`
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 15px;
-`;
-
-const ActionsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-`;
-
-const ActionButton = styled.button<{ $isPrimary?: boolean }>`
-  background: ${props => props.$isPrimary ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 4px 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
-
-const TempDisplay = styled.div`
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  min-width: 40px;
-  text-align: center;
-`;
-
 interface ThermostatCardProps {
   entityId: string;
   name: string;
@@ -124,17 +22,12 @@ interface ThermostatCardProps {
 }
 
 function getThermostatIcon(mode: string, type: 'hvac' | 'radiant', preset?: string): React.ReactNode {
-  // For radiant heating, always use heater icon
   if (type === 'radiant') {
     return <HeaterIcon />;
   }
-
-  // For HVAC systems
-  // Check for eco mode or off mode first
   if (preset === 'eco' || mode === 'off') {
     return <EcoIcon />;
   }
-
   switch (mode) {
     case 'heat':
       return <HeatIcon />;
@@ -149,135 +42,157 @@ function getThermostatIcon(mode: string, type: 'hvac' | 'radiant', preset?: stri
 
 function getThermostatState(entity: any): string {
   if (!entity) return '--';
-  
   const { state, attributes } = entity;
-  const mode = attributes?.hvac_mode || 'off';
+  
+  // For Nest thermostats, use state as mode and hvac_action for activity
+  const mode = state || attributes?.hvac_mode || 'off';
   const preset = attributes?.preset_mode;
   const targetTemp = attributes?.temperature;
   const currentTemp = attributes?.current_temperature;
   const fanMode = attributes?.fan_mode;
-
-  // Check for eco mode
-  if (preset === 'eco') {
-    return 'Eco Mode';
-  }
-
-  // Check if fan is running
-  if (fanMode === 'on') {
-    return 'Fan Running';
-  }
-
-  // Check if actively heating/cooling
-  if (state === 'heating' && mode === 'heat') {
-    return `Heating to ${targetTemp}°`;
-  }
-  if (state === 'cooling' && mode === 'cool') {
-    return `Cooling to ${targetTemp}°`;
-  }
-  if (state === 'heating' && mode === 'heat_cool') {
-    return `Heating to ${targetTemp}°`;
-  }
-  if (state === 'cooling' && mode === 'heat_cool') {
-    return `Cooling to ${targetTemp}°`;
-  }
-
-  // Idle states
-  if (mode === 'heat') {
-    return `Heat - idle`;
-  }
-  if (mode === 'cool') {
-    return `Cool - idle`;
-  }
-  if (mode === 'heat_cool') {
-    return `Heat/Cool - idle`;
-  }
-
+  const hvacAction = attributes?.hvac_action;
+  
+  if (preset === 'eco') return 'Eco Mode';
+  if (fanMode === 'on') return 'Fan Running';
+  
+  // For Nest thermostats, use hvac_action to determine if actively heating/cooling
+  if (hvacAction === 'heating') return `Heating to ${targetTemp}°`;
+  if (hvacAction === 'cooling') return `Cooling to ${targetTemp}°`;
+  
+  // If not actively heating/cooling, show the mode
+  if (mode === 'heat') return `Heat - idle`;
+  if (mode === 'cool') return `Cool - idle`;
+  if (mode === 'heat_cool') return `Heat/Cool - idle`;
+  
   return 'Off';
 }
 
 function isThermostatActive(entity: any): boolean {
   if (!entity) return false;
-  
   const { state, attributes } = entity;
-  const mode = attributes?.hvac_mode || 'off';
+  
+  // For Nest thermostats, check if state is not 'off'
+  // For other thermostats, check hvac_mode
+  const mode = state || attributes?.hvac_mode || 'off';
   const preset = attributes?.preset_mode;
-
+  
+  // Debug logging for the active check
+  console.log('isThermostatActive check:', {
+    state,
+    hvac_mode: attributes?.hvac_mode,
+    mode,
+    preset,
+    modeIsOff: mode === 'off',
+    presetIsEco: preset === 'eco',
+    result: mode !== 'off' && preset !== 'eco'
+  });
+  
   return mode !== 'off' && preset !== 'eco';
 }
 
 export default function ThermostatCard({ entityId, name, type }: ThermostatCardProps) {
   const entity = useEntityState(entityId);
-
-  const mode = entity?.attributes?.hvac_mode || 'off';
+  
+  // For Nest thermostats, use state as the mode, otherwise use hvac_mode
+  const mode = entity?.state || entity?.attributes?.hvac_mode || 'off';
   const preset = entity?.attributes?.preset_mode;
   const targetTemp = entity?.attributes?.temperature;
+  const currentTemp = entity?.attributes?.current_temperature;
+  const hvacAction = entity?.attributes?.hvac_action;
   const isActive = isThermostatActive(entity);
 
-  const handleModeChange = (newMode: string) => {
-    hassApiFetch('/api/services/climate/set_hvac_mode', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        entity_id: entityId,
-        hvac_mode: newMode 
-      }),
+  // Debug logging
+  React.useEffect(() => {
+    console.log(`ThermostatCard ${entityId} state update:`, {
+      entityId,
+      state: entity?.state,
+      mode,
+      hvac_action: entity?.attributes?.hvac_action,
+      hvac_mode: entity?.attributes?.hvac_mode,
+      preset_mode: entity?.attributes?.preset_mode,
+      temperature: entity?.attributes?.temperature,
+      current_temperature: entity?.attributes?.current_temperature,
+      isActive,
+      timestamp: new Date().toISOString()
     });
-  };
-
-  const handleTempChange = (direction: 'up' | 'down') => {
-    const currentTemp = targetTemp || 70;
-    const newTemp = direction === 'up' ? currentTemp + 1 : currentTemp - 1;
     
-    hassApiFetch('/api/services/climate/set_temperature', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        entity_id: entityId,
-        temperature: newTemp 
-      }),
-    });
-  };
+    // Log the full entity object for debugging
+    if (entity) {
+      console.log(`Full entity object for ${entityId}:`, entity);
+      console.log(`All attributes for ${entityId}:`, entity.attributes);
+      console.log(`Available attribute keys for ${entityId}:`, Object.keys(entity.attributes || {}));
+    }
+    
+    // Fetch available services for this entity
+    const fetchServices = async () => {
+      try {
+        const response = await hassApiFetch(`/api/states/${entityId}`);
+        const entityState = await response.json();
+        console.log(`Available services for ${entityId}:`, entityState);
+      } catch (error) {
+        console.error(`Failed to fetch entity state for ${entityId}:`, error);
+      }
+    };
+    
+    fetchServices();
+  }, [entity, entityId, isActive]);
 
-  const renderActions = () => {
-    if (!isActive) {
-      // Show mode selection buttons when off or in eco
-      return (
-        <ActionsContainer>
-          <ActionButton onClick={(e) => { e.stopPropagation(); handleModeChange('heat'); }}>
-            Heat
-          </ActionButton>
-          {type === 'hvac' && (
-            <ActionButton onClick={(e) => { e.stopPropagation(); handleModeChange('heat_cool'); }}>
-              Heat/Cool
-            </ActionButton>
-          )}
-          <ActionButton onClick={(e) => { e.stopPropagation(); handleModeChange('cool'); }}>
-            Cool
-          </ActionButton>
-        </ActionsContainer>
-      );
-    } else {
-      // Show temperature controls when active
-      return (
-        <ActionsContainer>
-          <ActionButton onClick={(e) => { e.stopPropagation(); handleTempChange('down'); }}>
-            -
-          </ActionButton>
-          <TempDisplay>{targetTemp}°</TempDisplay>
-          <ActionButton onClick={(e) => { e.stopPropagation(); handleTempChange('up'); }}>
-            +
-          </ActionButton>
-        </ActionsContainer>
-      );
+  const handleModeChange = async (newMode: string) => {
+    console.log(`Setting HVAC mode to ${newMode} for ${entityId}`);
+    try {
+      const requestBody = { entity_id: entityId, hvac_mode: newMode };
+      console.log('API request body:', requestBody);
+      
+      const response = await hassApiFetch('/api/services/climate/set_hvac_mode', {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+      });
+      
+      console.log('API response status:', response.status);
+      const responseText = await response.text();
+      console.log('API response body:', responseText);
+      
+      console.log(`Successfully set HVAC mode to ${newMode} for ${entityId}`);
+    } catch (error) {
+      console.error(`Failed to set HVAC mode to ${newMode} for ${entityId}:`, error);
     }
   };
 
+  const handleTempChange = async (direction: 'up' | 'down') => {
+    const currentTemp = targetTemp || 70;
+    const newTemp = direction === 'up' ? currentTemp + 1 : currentTemp - 1;
+    console.log(`Setting temperature to ${newTemp}° for ${entityId} (${direction} from ${currentTemp}°)`);
+    try {
+      await hassApiFetch('/api/services/climate/set_temperature', {
+        method: 'POST',
+        body: JSON.stringify({ entity_id: entityId, temperature: newTemp }),
+      });
+      console.log(`Successfully set temperature to ${newTemp}° for ${entityId}`);
+    } catch (error) {
+      console.error(`Failed to set temperature to ${newTemp}° for ${entityId}:`, error);
+    }
+  };
+
+  let actions: Array<{ label: React.ReactNode; onClick: (e: React.MouseEvent) => void; isPrimary?: boolean }> | null = null;
+  if (!isActive) {
+    // No actions when thermostat is off
+    actions = [];
+  } else {
+    // Show temperature controls when thermostat is on
+    actions = [
+      { label: <ThermostatIncreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('up'); } },
+      { label: `${targetTemp}°`, onClick: (e: React.MouseEvent) => {}, isPrimary: true },
+      { label: <ThermostatDecreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('down'); } },
+    ];
+  }
+
   return (
-    <Card $isActive={isActive}>
-      <IconContainer>
-        {getThermostatIcon(mode, type, preset)}
-      </IconContainer>
-      <Name>{name}</Name>
-      <State>{getThermostatState(entity)}</State>
-      {renderActions()}
-    </Card>
+    <DeviceCard
+      isActive={isActive}
+      actions={<DeviceCardActions actions={actions} />}
+    >
+      <DeviceCardIcon>{getThermostatIcon(mode, type, preset)}</DeviceCardIcon>
+      <DeviceCardInfo name={name} state={getThermostatState(entity)} />
+    </DeviceCard>
   );
 } 

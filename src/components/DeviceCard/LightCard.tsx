@@ -1,5 +1,10 @@
 import React from 'react';
-import DeviceCard from './DeviceCard';
+import {
+  DeviceCard,
+  DeviceCardIcon,
+  DeviceCardInfo,
+  DeviceCardMoreOptions
+} from './shared';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { useEntityState } from '../../contexts/HassContext';
 import { useModal } from '../../contexts/ModalContext';
@@ -10,15 +15,15 @@ import { ReactComponent as LightstripIcon } from '../../assets/device_icons/shel
 interface RoomLight {
   entityId: string;
   name: string;
-  displayName?: string; // Optional display name for UI - falls back to name if not provided
+  displayName?: string;
 }
 
 export interface LightScene {
   id: string;
   label: string;
   icon: React.ReactNode;
-  service?: string; // Home Assistant service to call
-  serviceData?: Record<string, any>; // Additional service data
+  service?: string;
+  serviceData?: Record<string, any>;
 }
 
 interface LightCardProps {
@@ -27,25 +32,17 @@ interface LightCardProps {
   lightType: 'ceiling' | 'lightstrip' | 'lamp';
   roomName?: string;
   roomLights?: RoomLight[];
-  scenes?: LightScene[]; // Available scenes for this light/room
+  scenes?: LightScene[];
 }
 
 function getLightStateString(entity: any): string {
   if (!entity) return '--';
   const { state, attributes } = entity;
   let result = state === 'on' ? 'On' : 'Off';
-  // Dimmable
   if (state === 'on' && attributes.brightness !== undefined) {
     const percent = Math.round(attributes.brightness / 2.55);
     result += ` – ${percent}%`;
   }
-  // Colored
-  // if (state === 'on' && attributes.rgb_color) {
-  //   const [r, g, b] = attributes.rgb_color;
-  //   // Show color as a colored dot or hex (here, just append hex)
-  //   const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-  //   result += ` – ${hex}`;
-  // }
   return result;
 }
 
@@ -74,44 +71,33 @@ export default function LightCard({ entityId, name, lightType, roomName, roomLig
   }
 
   function handleMoreOptions() {
-    // Create modal entityId format: "roomName|light1EntityId:light1Name|light2EntityId:light2Name|...|SCENES|scene1Id:scene1Label:scene1Service|scene2Id:scene2Label:scene2Service|..."
     let modalEntityId = '';
-    
-    console.log('Opening light modal with:', { roomName, roomLights, scenes });
-    
     if (roomName && roomLights && roomLights.length > 1) {
-      const lightParts = roomLights.map(light => 
+      const lightParts = roomLights.map(light =>
         `${light.entityId}:${light.name}:${light.displayName || ''}`
       );
       modalEntityId = `${roomName}|${lightParts.join('|')}`;
     } else {
-      // Fallback to single light format for backwards compatibility
       modalEntityId = `${roomName || 'Light'}|${entityId}:${name}:`;
     }
-    
-    console.log('Base modal entity ID:', modalEntityId);
-    
-    // Add scenes if provided
     if (scenes && scenes.length > 0) {
-      const sceneParts = scenes.map(scene => 
+      const sceneParts = scenes.map(scene =>
         `${scene.id}:${scene.label}:${scene.service || ''}:${JSON.stringify(scene.serviceData || {})}`
       );
       modalEntityId += `|SCENES|${sceneParts.join('|')}`;
-      console.log('Scene parts:', sceneParts);
     }
-    
-    console.log('Final modal entity ID:', modalEntityId);
     openModal('light', modalEntityId);
   }
 
   return (
     <DeviceCard
-      icon={getLightIcon(lightType)}
-      name={name}
-      state={getLightStateString(entity)}
       isActive={entity?.state === 'on'}
       onClick={toggleLight}
-      onMoreOptions={handleMoreOptions}
-    />
+      actions={null}
+    >
+      <DeviceCardIcon>{getLightIcon(lightType)}</DeviceCardIcon>
+      <DeviceCardInfo name={name} state={getLightStateString(entity)} />
+      <DeviceCardMoreOptions onClick={handleMoreOptions} />
+    </DeviceCard>
   );
 } 

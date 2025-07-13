@@ -60,6 +60,14 @@ export function HassProvider({ children }: { children: React.ReactNode }) {
         }
       } else if (data.type === 'event' && data.event?.data?.entity_id) {
         // State changed event
+        console.log('State change received:', {
+          entityId: data.event.data.entity_id,
+          oldState: data.event.data.old_state?.state,
+          newState: data.event.data.new_state?.state,
+          oldHvacMode: data.event.data.old_state?.attributes?.hvac_mode,
+          newHvacMode: data.event.data.new_state?.attributes?.hvac_mode,
+          timestamp: new Date().toISOString()
+        });
         setEntities(prev => ({
           ...prev,
           [data.event.data.entity_id]: data.event.data.new_state,

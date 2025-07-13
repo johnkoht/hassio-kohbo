@@ -1,5 +1,9 @@
 import React from 'react';
-import DeviceCard from './DeviceCard';
+import {
+  DeviceCard,
+  DeviceCardIcon,
+  DeviceCardInfo
+} from './shared';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { useEntityState } from '../../contexts/HassContext';
 import { ReactComponent as LockedIcon } from '../../assets/device_icons/lock_locked.svg';
@@ -13,12 +17,10 @@ interface LockCardProps {
 function getLockStateString(entity: any): string {
   if (!entity) return '--';
   const { state } = entity;
-  
   if (state === 'locked') return 'Locked';
   if (state === 'unlocked') return 'Unlocked';
   if (state === 'locking') return 'Locking...';
   if (state === 'unlocking') return 'Unlocking...';
-  
   return state.charAt(0).toUpperCase() + state.slice(1);
 }
 
@@ -38,11 +40,12 @@ export default function LockCard({ entityId, name }: LockCardProps) {
 
   return (
     <DeviceCard
-      icon={isLocked ? <LockedIcon /> : <UnlockedIcon />}
-      name={name}
-      state={getLockStateString(entity)}
       isActive={isLocked}
       onClick={isTransitioning ? undefined : toggleLock}
-    />
+      actions={null}
+    >
+      <DeviceCardIcon>{isLocked ? <LockedIcon /> : <UnlockedIcon />}</DeviceCardIcon>
+      <DeviceCardInfo name={name} state={getLockStateString(entity)} />
+    </DeviceCard>
   );
 } 
