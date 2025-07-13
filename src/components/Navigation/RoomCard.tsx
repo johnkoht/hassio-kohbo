@@ -113,7 +113,7 @@ interface RoomCardProps {
 
 export default function RoomCard({ room, onClick }: RoomCardProps) {
   const navigate = useNavigate();
-  const tempEntity = useEntityState(room.tempSensor);
+  const tempEntity = useEntityState(room.tempSensor || '');
   const aqiEntity = useEntityState(room.aqiSensor || '');
   const occupancyEntity = useEntityState(room.occupancySensor || '');
 
