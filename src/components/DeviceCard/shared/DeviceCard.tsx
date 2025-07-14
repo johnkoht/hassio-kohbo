@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Card = styled.div<{ $isActive: boolean }>`
   width: 220px;
   height: 150px;
-  background: radial-gradient(68.86% 108.57% at 29.04% 31.2%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%), rgba(233, 236, 239, ${props => props.$isActive ? '0.4' : '0.005'});
+  background: radial-gradient(68.86% 108.57% at 29.04% 31.2%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%), rgba(233, 236, 239, ${props => props.$isActive ? '0.3' : '0.005'});
   backdrop-filter: blur(5px);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);

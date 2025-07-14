@@ -20,6 +20,7 @@ import autoIcon from '../assets/room_mode_icons/auto.svg';
 import bedtimeIcon from '../assets/room_mode_icons/bedtime.svg';
 import dndIcon from '../assets/room_mode_icons/dnd.svg';
 import ThermostatCard from '../components/DeviceCard/ThermostatCard';
+import MediaPlayerCard from '../components/DeviceCard/MediaPlayerCard';
 
 const stateIcons: Record<string, string> = {
   Auto: autoIcon,
@@ -150,6 +151,10 @@ export default function MainBedroomDashboard() {
         </div>
         <div style={{ width: '100%', marginTop: 25 }}>
           <DeviceRow>
+            <MediaPlayerCard 
+              entityId="media_player.sonos_main_bedroom"
+              name="Main Bedroom Speaker"
+            />
             <LightCard
               entityId="light.main_bedroom_main_lights"
               name="Main Bedroom Lights"

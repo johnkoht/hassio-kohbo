@@ -21,9 +21,9 @@ const DeviceGrid = styled.div`
   align-content: flex-start;
 `;
 
-const DeviceCardWrapper = styled.div`
-  flex: 0 0 150px;
-  height: 150px;
+const DeviceCardWrapper = styled.div<{ $isMediaPlayer?: boolean }>`
+  flex: ${props => props.$isMediaPlayer ? '0 0 320px' : '0 0 150px'};
+  height: ${props => props.$isMediaPlayer ? '320px' : '150px'};
   scroll-snap-align: start;
 `;
 
@@ -39,9 +39,23 @@ export default function DeviceRow({ children }: DeviceRowProps) {
     <EmblaContainer>
       <EmblaViewport ref={emblaRef}>
         <DeviceGrid>
-          {childrenArray.map((child, idx) => (
-            <DeviceCardWrapper key={idx}>{child}</DeviceCardWrapper>
-          ))}
+          {childrenArray.map((child, idx) => {
+            // Check if this is a MediaPlayerCard by looking at the component props
+            const isMediaPlayer: boolean = Boolean(
+              React.isValidElement(child) && 
+              child.props && 
+              typeof child.props === 'object' &&
+              'entityId' in child.props &&
+              typeof child.props.entityId === 'string' &&
+              child.props.entityId.startsWith('media_player.')
+            );
+            
+            return (
+              <DeviceCardWrapper key={idx} $isMediaPlayer={isMediaPlayer}>
+                {child}
+              </DeviceCardWrapper>
+            );
+          })}
         </DeviceGrid>
       </EmblaViewport>
     </EmblaContainer>

@@ -10,6 +10,7 @@ import FanCard from '../components/DeviceCard/FanCard';
 import OutletCard from '../components/DeviceCard/OutletCard';
 import DoorCard from '../components/DeviceCard/DoorCard';
 import WindowCard from '../components/DeviceCard/WindowCard';
+import MediaPlayerCard from '../components/DeviceCard/MediaPlayerCard';
 import SettingsButton from '../components/SettingsButton/SettingsButton';
 import { SettingsGroup } from '../components/Modal/SettingsModal';
 import { useEntityState } from '../contexts/HassContext';
@@ -190,6 +191,10 @@ export default function OfficeDashboard() {
         </div>
         <div style={{ width: '100%', marginTop: 25 }}>
           <DeviceRow>
+            <MediaPlayerCard 
+              entityId="media_player.sonos_office"
+              name="Office Speaker"
+            />
             <LightCard
               entityId="light.office_lights"
               name="Ceiling Lights"

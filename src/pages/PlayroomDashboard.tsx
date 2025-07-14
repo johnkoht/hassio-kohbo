@@ -19,6 +19,7 @@ import playroomBg from '../assets/room_bgs/playroom.jpg';
 import autoIcon from '../assets/room_mode_icons/auto.svg';
 import bedtimeIcon from '../assets/room_mode_icons/bedtime.svg';
 import dndIcon from '../assets/room_mode_icons/dnd.svg';
+import MediaPlayerCard from '../components/DeviceCard/MediaPlayerCard';
 
 const stateIcons: Record<string, string> = {
   Auto: autoIcon,
@@ -143,6 +144,10 @@ export default function PlayroomDashboard() {
         </div>
         <div style={{ width: '100%', marginTop: 25 }}>
           <DeviceRow>
+            <MediaPlayerCard 
+              entityId="media_player.sonos_playroom"
+              name="Playroom Speaker"
+            />
             <LightCard
               entityId="light.playroom_lights"
               name="Playroom Lights"

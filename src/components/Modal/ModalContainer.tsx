@@ -7,6 +7,7 @@ import FanModal from './FanModal';
 import TVModal from './TVModal';
 import SettingsModal, { SettingsGroup } from './SettingsModal';
 import ThermostatModal from './ThermostatModal';
+import MediaPlayerModal from './MediaPlayerModal';
 import { LightScene } from '../DeviceCard/LightCard';
 
 const Backdrop = styled.div<{ $isOpen: boolean }>`
@@ -279,6 +280,12 @@ export default function ModalContainer() {
         console.log('Parsing thermostat modal data:', { thermostatEntityId, thermostatType });
         
         return <ThermostatModal entityId={thermostatEntityId} type={thermostatType as 'hvac' | 'radiant'} />;
+      case 'media_player':
+        // Parse the entityId to get media player info - format: "entityId|name"
+        const [mediaEntityId, mediaName] = modalState.entityId!.split('|');
+        console.log('Parsing media player modal data:', { mediaEntityId, mediaName });
+        
+        return <MediaPlayerModal entityId={mediaEntityId} name={mediaName} />;
       default:
         return null;
     }
