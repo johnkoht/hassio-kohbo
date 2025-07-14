@@ -9,14 +9,74 @@ import { ReactComponent as HeatIcon } from '../../assets/device_icons/hvac_heati
 import { ReactComponent as CoolIcon } from '../../assets/device_icons/hvac_cooling.svg';
 import { ReactComponent as HeatCoolIcon } from '../../assets/device_icons/hvac_heat_cool.svg';
 import { ReactComponent as EcoIcon } from '../../assets/device_icons/hvac_eco.svg';
+import { ReactComponent as PowerIcon } from '../../assets/utils/power.svg';
 import { ReactComponent as ThermostatIncreaseIcon } from '../../assets/device_icons/thermostat_increase.svg';
 import { ReactComponent as ThermostatDecreaseIcon } from '../../assets/device_icons/thermostat_decrease.svg';
+import { ReactComponent as TemperatureIcon } from '../../assets/utils/temperature.svg';
+import { ReactComponent as HumidityIcon } from '../../assets/utils/humidity.svg';
+import { ReactComponent as ClearDayIcon } from '../../assets/utils/weather/Clear Day Icon (1).svg';
+import { ReactComponent as CloudyIcon } from '../../assets/utils/weather/Cloud Icon.svg';
+import { ReactComponent as FoggyIcon } from '../../assets/utils/weather/Foggy Icon.svg';
+import { ReactComponent as RainyIcon } from '../../assets/utils/weather/Rainy Icon.svg';
+import { ReactComponent as PartlyCloudyDayIcon } from '../../assets/utils/weather/Partly Cloudy Day Icon.svg';
+import { ReactComponent as PartlyCloudyNightIcon } from '../../assets/utils/weather/Partly Cloudy Night Icon.svg';
+import { ReactComponent as ThunderstormIcon } from '../../assets/utils/weather/Thunderstorm Icon.svg';
+import { ReactComponent as SnowyIcon } from '../../assets/utils/weather/Snowy Weather Icon.svg';
+import { ReactComponent as HailIcon } from '../../assets/utils/weather/Hail Icon.svg';
+import { ReactComponent as MoonStarsIcon } from '../../assets/utils/weather/Moon Stars Icon (1).svg';
 
 const ModalContent = styled.div`
   padding: 35px;
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const SensorRow = styled.div`
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+`;
+
+const SensorCard = styled.div`
+  background: rgba(173, 181, 189, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  min-width: 100px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+`;
+
+const SensorIcon = styled.div`
+  width: 24px;
+  height: 24px;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+    margin-bottom: 4px;
+  }
+`;
+
+const SensorValue = styled.div`
+  font-size: 22px;
+  font-weight: 400;
+  color: #fff;
+  line-height: 22px;
+`;
+
+const SensorLabel = styled.div`
+  font-size: 11px;
+  font-weight: 600;
+  color: #ADB5BD;
 `;
 
 const ThermostatContainer = styled.div`
@@ -92,6 +152,7 @@ const Section = styled.div`
 
 interface ThermostatModalProps {
   entityId: string;
+  type?: 'hvac' | 'radiant';
 }
 
 const modeConfig = {
@@ -106,6 +167,45 @@ const minTemp = 50;
 const maxTemp = 90;
 const arcStart = 0; // degrees - start at right (3 o'clock)
 const arcEnd = 273; // degrees - extend past top to add more length on right side
+
+// Weather condition mapping
+function getWeatherIcon(condition: string): React.ReactNode {
+  const normalizedCondition = condition?.toLowerCase() || '';
+  
+  switch (normalizedCondition) {
+    case 'clear-day':
+    case 'sunny':
+    case 'clear':
+      return <ClearDayIcon />;
+    case 'clear-night':
+      return <MoonStarsIcon />;
+    case 'partly-cloudy-day':
+    case 'partlycloudy':
+      return <PartlyCloudyDayIcon />;
+    case 'partly-cloudy-night':
+      return <PartlyCloudyNightIcon />;
+    case 'cloudy':
+    case 'overcast':
+      return <CloudyIcon />;
+    case 'fog':
+    case 'foggy':
+      return <FoggyIcon />;
+    case 'rain':
+    case 'rainy':
+    case 'drizzle':
+      return <RainyIcon />;
+    case 'thunderstorm':
+    case 'lightning':
+      return <ThunderstormIcon />;
+    case 'snow':
+    case 'snowy':
+      return <SnowyIcon />;
+    case 'hail':
+      return <HailIcon />;
+    default:
+      return <ClearDayIcon />; // Default fallback
+  }
+}
 
 function getArcPath(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
   // Convert to match Home Assistant's coordinate system
@@ -129,10 +229,44 @@ function polarToCartesian(cx: number, cy: number, r: number, angle: number) {
   };
 }
 
-export default function ThermostatModal({ entityId }: ThermostatModalProps) {
+export default function ThermostatModal({ entityId, type = 'hvac' }: ThermostatModalProps) {
   const { closeModal } = useModal();
   const entity = useEntityState(entityId);
   const [dragTemp, setDragTemp] = useState<number | null>(null);
+  
+  // Determine appropriate sensors based on thermostat entity ID
+  const getSensorEntities = (thermostatEntityId: string) => {
+    if (thermostatEntityId.includes('main_bedroom')) {
+      return {
+        tempSensor: 'sensor.main_bedroom_awair_temperature',
+        humiditySensor: 'sensor.main_bedroom_awair_humidity'
+      };
+    } else if (thermostatEntityId.includes('jr_suite')) {
+      return {
+        tempSensor: 'sensor.jr_suite_awair_temperature',
+        humiditySensor: 'sensor.jr_suite_awair_humidity'
+      };
+    } else if (thermostatEntityId.includes('office')) {
+      return {
+        tempSensor: 'sensor.office_awair_temperature',
+        humiditySensor: 'sensor.office_awair_humidity'
+      };
+    } else {
+      // Default to kitchen/family room sensors
+      return {
+        tempSensor: 'sensor.kitchen_awair_temperature',
+        humiditySensor: 'sensor.kitchen_awair_humidity'
+      };
+    }
+  };
+
+  const { tempSensor, humiditySensor } = getSensorEntities(entityId);
+
+  // Sensor entities for contextual information
+  const outsideTempEntity = useEntityState('sensor.tempest_temperature');
+  const insideTempEntity = useEntityState(tempSensor);
+  const humidityEntity = useEntityState(humiditySensor);
+  const weatherEntity = useEntityState('weather.kpwk');
   
   // Get thermostat state from entity - fix mode detection
   const rawMode = entity?.state || entity?.attributes?.hvac_mode || 'off';
@@ -141,6 +275,7 @@ export default function ThermostatModal({ entityId }: ThermostatModalProps) {
   const heatSetTemp = entity?.attributes?.target_temp_low || entity?.attributes?.temperature || 70;
   const coolSetTemp = entity?.attributes?.target_temp_high || entity?.attributes?.temperature || 75;
   const currentTemp = entity?.attributes?.current_temperature || 70;
+  const hvacAction = entity?.attributes?.hvac_action;
   
   // Determine actual mode - if preset is eco, use eco mode
   const mode = preset === 'eco' ? 'eco' : rawMode;
@@ -154,6 +289,20 @@ export default function ThermostatModal({ entityId }: ThermostatModalProps) {
   const displayTemp = mode === 'heat_cool' ? displayCoolTemp : (dragTemp !== null ? dragTemp : setTemp);
   
   const modeInfo = modeConfig[mode as keyof typeof modeConfig] || modeConfig['off'];
+  
+  // Determine display label based on mode and hvac_action
+  const getDisplayLabel = () => {
+    if (preset === 'eco') return 'Eco';
+    if (mode === 'off') return 'Idle';
+    if (mode === 'heat_cool') return 'Heat/Cool';
+    
+    // For heat/cool modes, check if actively heating/cooling
+    if (hvacAction === 'heating') return 'Heating';
+    if (hvacAction === 'cooling') return 'Cooling';
+    
+    // If not actively heating/cooling, show as idle
+    return 'Idle';
+  };
 
   // Arc paths
   const size = 300; // Increased from 240 (25% larger)
@@ -341,8 +490,11 @@ export default function ThermostatModal({ entityId }: ThermostatModalProps) {
   const coolHandlePos = polarToCartesian(0, 0, radius, coolTempAngle);
   const currentPos = polarToCartesian(0, 0, radius, arcStart + (arcEnd - arcStart) * ((currentTemp - minTemp) / (maxTemp - minTemp)));
 
-  // Mode action items
-  const modeActions: ActionItem[] = [
+  // Mode action items - different for radiant vs HVAC
+  const modeActions: ActionItem[] = type === 'radiant' ? [
+    { id: 'heat', label: 'Heat', icon: <HeatIcon /> },
+    { id: 'off', label: 'Off', icon: <PowerIcon /> },
+  ] : [
     { id: 'heat', label: 'Heat', icon: <HeatIcon /> },
     { id: 'heat_cool', label: 'Heat/Cool', icon: <HeatCoolIcon /> },
     { id: 'cool', label: 'Cool', icon: <CoolIcon /> },
@@ -361,6 +513,36 @@ export default function ThermostatModal({ entityId }: ThermostatModalProps) {
         centered={true}
         marginBottom="20px"
       />
+
+      <SensorRow>
+        <SensorCard>
+          <SensorIcon>
+            {getWeatherIcon(weatherEntity?.state || '')}
+          </SensorIcon>
+          <SensorValue>
+            {outsideTempEntity?.state ? `${Math.round(parseFloat(outsideTempEntity.state))}°` : '--'}
+          </SensorValue>
+          <SensorLabel>Outside</SensorLabel>
+        </SensorCard>
+        <SensorCard>
+          <SensorIcon>
+            <TemperatureIcon />
+          </SensorIcon>
+          <SensorValue>
+            {insideTempEntity?.state ? `${Math.round(parseFloat(insideTempEntity.state))}°` : '--'}
+          </SensorValue>
+          <SensorLabel>Inside</SensorLabel>
+        </SensorCard>
+        <SensorCard>
+          <SensorIcon>
+            <HumidityIcon />
+          </SensorIcon>
+          <SensorValue>
+            {humidityEntity?.state ? `${Math.round(parseFloat(humidityEntity.state))}%` : '--'}
+          </SensorValue>
+          <SensorLabel>Humidity</SensorLabel>
+        </SensorCard>
+      </SensorRow>
 
       <ThermostatContainer>
         <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -439,7 +621,7 @@ export default function ThermostatModal({ entityId }: ThermostatModalProps) {
             textAlign: 'center',
             marginTop: -10 // Adjust for visual centering
           }}>
-            <ModeLabel $color={modeInfo.color}>{modeInfo.label}</ModeLabel>
+            <ModeLabel $color={modeInfo.color}>{getDisplayLabel()}</ModeLabel>
             {mode === 'heat_cool' ? (
               <TemperatureDisplay>{displayHeatTemp}-{displayCoolTemp}<span>°</span></TemperatureDisplay>
             ) : (

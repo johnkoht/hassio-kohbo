@@ -176,30 +176,44 @@ export default function ThermostatCard({ entityId, name, type }: ThermostatCardP
   };
 
   let actions: Array<{ label: React.ReactNode; onClick: (e: React.MouseEvent) => void; isPrimary?: boolean }> | null = null;
-  if (!isActive) {
-    // Show mode selection buttons when thermostat is off or in eco mode
-    actions = [
-      { label: <HeatIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('heat'); } },
-      { label: <HeatCoolIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('heat_cool'); } },
-      { label: <CoolIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('cool'); } },
-    ];
+  
+  if (type === 'radiant') {
+    // Radiant heating: only show controls when active, no controls when off
+    if (isActive) {
+      actions = [
+        { label: <ThermostatIncreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('up'); } },
+        { label: `${targetTemp}°`, onClick: (e: React.MouseEvent) => {}, isPrimary: true },
+        { label: <ThermostatDecreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('down'); } },
+      ];
+    }
+    // When off, actions = null (no action buttons, just clickable card)
   } else {
-    // Show temperature controls when thermostat is on
-    actions = [
-      { label: <ThermostatIncreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('up'); } },
-      { label: `${targetTemp}°`, onClick: (e: React.MouseEvent) => {}, isPrimary: true },
-      { label: <ThermostatDecreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('down'); } },
-    ];
+    // HVAC thermostat: original logic
+    if (!isActive) {
+      // Show mode selection buttons when thermostat is off or in eco mode
+      actions = [
+        { label: <HeatIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('heat'); } },
+        { label: <HeatCoolIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('heat_cool'); } },
+        { label: <CoolIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('cool'); } },
+      ];
+    } else {
+      // Show temperature controls when thermostat is on
+      actions = [
+        { label: <ThermostatIncreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('up'); } },
+        { label: `${targetTemp}°`, onClick: (e: React.MouseEvent) => {}, isPrimary: true },
+        { label: <ThermostatDecreaseIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleTempChange('down'); } },
+      ];
+    }
   }
 
   const handleCardClick = () => {
-    openModal('thermostat', entityId);
+    openModal('thermostat', `${entityId}|${type}`);
   };
 
   return (
     <DeviceCard
       isActive={isActive}
-      actions={<DeviceCardActions actions={actions} />}
+      actions={actions ? <DeviceCardActions actions={actions} /> : null}
       onClick={handleCardClick}
     >
       <DeviceCardIcon>{getThermostatIcon(mode, type, preset)}</DeviceCardIcon>

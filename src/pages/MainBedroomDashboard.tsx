@@ -19,6 +19,7 @@ import kitchenBg from '../assets/room_bgs/main_bedroom.jpg';
 import autoIcon from '../assets/room_mode_icons/auto.svg';
 import bedtimeIcon from '../assets/room_mode_icons/bedtime.svg';
 import dndIcon from '../assets/room_mode_icons/dnd.svg';
+import ThermostatCard from '../components/DeviceCard/ThermostatCard';
 
 const stateIcons: Record<string, string> = {
   Auto: autoIcon,
@@ -156,6 +157,11 @@ export default function MainBedroomDashboard() {
               roomName="Main Bedroom"
               roomLights={roomLights}
               scenes={mainBedroomScenes}
+            />
+            <ThermostatCard
+              entityId="climate.main_bedroom"
+              name="Radiant Heat"
+              type="radiant"
             />
             <LightCard
               entityId="light.hue_ambiance_lamp_1"

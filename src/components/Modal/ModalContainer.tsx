@@ -274,8 +274,11 @@ export default function ModalContainer() {
         
         return <SettingsModal roomName={settingsRoomName} settingsGroups={settingsGroups} />;
       case 'thermostat':
-        // For thermostat, entityId is the climate entity ID
-        return <ThermostatModal entityId={modalState.entityId!} />;
+        // Parse the entityId to get thermostat info - format: "entityId|type"
+        const [thermostatEntityId, thermostatType] = modalState.entityId!.split('|');
+        console.log('Parsing thermostat modal data:', { thermostatEntityId, thermostatType });
+        
+        return <ThermostatModal entityId={thermostatEntityId} type={thermostatType as 'hvac' | 'radiant'} />;
       default:
         return null;
     }
