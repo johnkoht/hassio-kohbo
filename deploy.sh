@@ -56,6 +56,16 @@ fi
 echo "🔨 Building and starting new container..."
 docker compose --env-file $ENV_FILE up -d --build
 
+# Wait for container to be ready
+echo "⏳ Waiting for container to be ready..."
+sleep 5
+
+# Configure runtime settings
+echo "🔧 Configuring runtime settings..."
+source $ENV_FILE
+docker exec $CONTAINER_NAME sed -i "s|HASS_URL_PLACEHOLDER|$REACT_APP_HASS_URL|g" /usr/share/nginx/html/config.js
+docker exec $CONTAINER_NAME sed -i "s|HASS_TOKEN_PLACEHOLDER|$REACT_APP_HASS_TOKEN|g" /usr/share/nginx/html/config.js
+
 # Wait for container to be healthy
 echo "⏳ Waiting for container to be ready..."
 sleep 10

@@ -26,8 +26,13 @@ export function HassProvider({ children }: { children: React.ReactNode }) {
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (!url || !token) return;
+    console.log('HassContext: Initializing with config:', { url, token: token ? '***' : 'missing' });
+    if (!url || !token) {
+      console.error('HassContext: Missing URL or token, cannot connect');
+      return;
+    }
     const wsUrl = url.replace(/^http/, 'ws') + '/api/websocket';
+    console.log('HassContext: Connecting to WebSocket:', wsUrl);
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
     let msgId = 1;
