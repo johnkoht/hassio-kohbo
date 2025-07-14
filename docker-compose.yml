@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     ports:
       - "3001:80"
+    env_file:
+      - .env.production
     environment:
       - NODE_ENV=production
       # Home Assistant configuration - SET THESE ON YOUR VM
