@@ -54,7 +54,7 @@ fi
 
 # Build and start new container
 echo "🔨 Building and starting new container..."
-docker-compose --env-file $ENV_FILE up -d --build
+docker compose --env-file $ENV_FILE up -d --build
 
 # Wait for container to be healthy
 echo "⏳ Waiting for container to be ready..."
