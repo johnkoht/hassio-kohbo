@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  hassio-kohbo:
+    build: .
+    container_name: hassio-kohbo-app
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    networks:
+      - web
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  web:
+    external: true  # Assumes you have a 'web' network for Caddy 
