@@ -71,7 +71,7 @@ chmod +x deploy.sh
 
 Or manually with Docker Compose:
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ## Caddy Configuration
