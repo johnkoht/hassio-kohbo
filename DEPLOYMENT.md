@@ -5,7 +5,8 @@ This guide will help you deploy the Hassio Kohbo dashboard as a Docker container
 ## Prerequisites
 
 - Docker and Docker Compose installed on your VM
-- Git installed on your VM
+- Git installed on your VM  
+- User added to docker group: `usermod -aG docker $USER` (then logout/login)
 - Your repository pushed to GitHub
 - Caddy set up for reverse proxy
 
@@ -24,7 +25,7 @@ On your VM, create a `.env.production` file with your Home Assistant secrets:
 
 ```bash
 # Create the environment file
-nano /root/hassio-kohbo/.env.production
+nano ~/hassio-kohbo/.env.production
 ```
 
 Add your Home Assistant configuration:
@@ -65,7 +66,7 @@ REPO_URL="https://github.com/your-username/hassio-kohbo.git"  # Your repo URL
 Run the deployment script:
 ```bash
 chmod +x deploy.sh
-sudo ./deploy.sh
+./deploy.sh
 ```
 
 Or manually with Docker Compose:
@@ -107,7 +108,7 @@ docker restart hassio-kohbo-app
 
 ### Update deployment
 ```bash
-sudo ./deploy.sh
+./deploy.sh
 ```
 
 ### Remove everything
@@ -160,6 +161,15 @@ deploy:
   resources:
     limits:
       memory: 1G
+```
+
+### Docker permission denied
+If you get "permission denied" errors:
+```bash
+# Add user to docker group
+usermod -aG docker $USER
+# Then logout and login again, or:
+newgrp docker
 ```
 
 ## Security Considerations

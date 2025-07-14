@@ -7,7 +7,7 @@ set -e  # Exit on any error
 
 # Configuration
 REPO_URL="https://github.com/johnkoht/hassio-kohbo.git" 
-DEPLOY_DIR="/root/hassio-kohbo"
+DEPLOY_DIR="$HOME/hassio-kohbo"
 CONTAINER_NAME="hassio-kohbo-app"
 ENV_FILE=".env.production"
 
@@ -26,7 +26,7 @@ fi
 echo "✅ Environment file found: $ENV_FILE"
 
 # Create deployment directory if it doesn't exist
-sudo mkdir -p $DEPLOY_DIR
+mkdir -p $DEPLOY_DIR
 
 # Navigate to deployment directory
 cd $DEPLOY_DIR
