@@ -9,8 +9,21 @@ set -e  # Exit on any error
 REPO_URL="https://github.com/johnkoht/hassio-kohbo.git" 
 DEPLOY_DIR="/root/hassio-kohbo"
 CONTAINER_NAME="hassio-kohbo-app"
+ENV_FILE=".env.production"
 
 echo "🚀 Starting deployment of Hassio Kohbo..."
+
+# Check if environment file exists
+if [ ! -f "$DEPLOY_DIR/$ENV_FILE" ]; then
+    echo "❌ Missing environment file: $DEPLOY_DIR/$ENV_FILE"
+    echo "📋 Please create it with your Home Assistant configuration:"
+    echo "   REACT_APP_HASS_URL=http://your-ha-ip:8123"
+    echo "   REACT_APP_HASS_TOKEN=your-token-here"
+    echo "💡 See env.production.example for reference"
+    exit 1
+fi
+
+echo "✅ Environment file found: $ENV_FILE"
 
 # Create deployment directory if it doesn't exist
 sudo mkdir -p $DEPLOY_DIR
@@ -41,7 +54,7 @@ fi
 
 # Build and start new container
 echo "🔨 Building and starting new container..."
-docker-compose up -d --build
+docker-compose --env-file $ENV_FILE up -d --build
 
 # Wait for container to be healthy
 echo "⏳ Waiting for container to be ready..."

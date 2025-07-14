@@ -18,7 +18,32 @@ git clone https://github.com/your-username/hassio-kohbo.git
 cd hassio-kohbo
 ```
 
-### 2. Update Configuration
+### 2. Create Environment File
+
+On your VM, create a `.env.production` file with your Home Assistant secrets:
+
+```bash
+# Create the environment file
+nano /root/hassio-kohbo/.env.production
+```
+
+Add your Home Assistant configuration:
+```bash
+# Your Home Assistant URL (include http:// or https://)
+REACT_APP_HASS_URL=http://your-home-assistant-ip:8123
+
+# Your Home Assistant Long-Lived Access Token
+REACT_APP_HASS_TOKEN=your-long-lived-access-token-here
+```
+
+**How to get your Home Assistant token:**
+1. Open Home Assistant web interface
+2. Go to Profile (click your user icon)
+3. Go to Security tab
+4. Create a "Long-Lived Access Token"
+5. Copy the token to your `.env.production` file
+
+### 3. Update Configuration
 
 Edit the following files with your specific settings:
 
@@ -35,7 +60,7 @@ labels:
 REPO_URL="https://github.com/your-username/hassio-kohbo.git"  # Your repo URL
 ```
 
-### 3. Deploy
+### 4. Deploy
 
 Run the deployment script:
 ```bash
