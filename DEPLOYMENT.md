@@ -113,7 +113,7 @@ docker restart hassio-kohbo-app
 
 ### Remove everything
 ```bash
-docker-compose down --rmi all --volumes
+docker compose down --rmi all --volumes
 ```
 
 ## Environment Variables
