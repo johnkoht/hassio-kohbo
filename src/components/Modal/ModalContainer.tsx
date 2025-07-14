@@ -6,6 +6,7 @@ import ClimateModal from './ClimateModal';
 import FanModal from './FanModal';
 import TVModal from './TVModal';
 import SettingsModal, { SettingsGroup } from './SettingsModal';
+import ThermostatModal from './ThermostatModal';
 import { LightScene } from '../DeviceCard/LightCard';
 
 const Backdrop = styled.div<{ $isOpen: boolean }>`
@@ -272,6 +273,9 @@ export default function ModalContainer() {
         }
         
         return <SettingsModal roomName={settingsRoomName} settingsGroups={settingsGroups} />;
+      case 'thermostat':
+        // For thermostat, entityId is the climate entity ID
+        return <ThermostatModal entityId={modalState.entityId!} />;
       default:
         return null;
     }

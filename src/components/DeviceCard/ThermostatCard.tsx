@@ -6,6 +6,7 @@ import {
   DeviceCardActions
 } from './shared';
 import { useEntityState } from '../../contexts/HassContext';
+import { useModal } from '../../contexts/ModalContext';
 import { hassApiFetch } from '../../api/hassApiFetch';
 import { ReactComponent as HeatIcon } from '../../assets/device_icons/hvac_heating.svg';
 import { ReactComponent as CoolIcon } from '../../assets/device_icons/hvac_cooling.svg';
@@ -92,6 +93,7 @@ function isThermostatActive(entity: any): boolean {
 
 export default function ThermostatCard({ entityId, name, type }: ThermostatCardProps) {
   const entity = useEntityState(entityId);
+  const { openModal } = useModal();
   
   // For Nest thermostats, use state as the mode, otherwise use hvac_mode
   const mode = entity?.state || entity?.attributes?.hvac_mode || 'off';
@@ -175,8 +177,12 @@ export default function ThermostatCard({ entityId, name, type }: ThermostatCardP
 
   let actions: Array<{ label: React.ReactNode; onClick: (e: React.MouseEvent) => void; isPrimary?: boolean }> | null = null;
   if (!isActive) {
-    // No actions when thermostat is off
-    actions = [];
+    // Show mode selection buttons when thermostat is off or in eco mode
+    actions = [
+      { label: <HeatIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('heat'); } },
+      { label: <HeatCoolIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('heat_cool'); } },
+      { label: <CoolIcon />, onClick: (e: React.MouseEvent) => { e.stopPropagation(); handleModeChange('cool'); } },
+    ];
   } else {
     // Show temperature controls when thermostat is on
     actions = [
@@ -186,10 +192,15 @@ export default function ThermostatCard({ entityId, name, type }: ThermostatCardP
     ];
   }
 
+  const handleCardClick = () => {
+    openModal('thermostat', entityId);
+  };
+
   return (
     <DeviceCard
       isActive={isActive}
       actions={<DeviceCardActions actions={actions} />}
+      onClick={handleCardClick}
     >
       <DeviceCardIcon>{getThermostatIcon(mode, type, preset)}</DeviceCardIcon>
       <DeviceCardInfo name={name} state={getThermostatState(entity)} />
