@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useModal } from '../../contexts/ModalContext';
 import { useEntityState } from '../../contexts/HassContext';
 import { hassApiFetch } from '../../api/hassApiFetch';
+import { getFullImageUrl } from '../../utils/urlUtils';
 import ModalHeader from './shared/ModalHeader';
 import VerticalSlider from '../VerticalSlider/VerticalSlider';
 import ActionGrid, { ActionItem } from '../ActionGrid/ActionGrid';
@@ -223,7 +224,7 @@ export default function MediaPlayerModal({ entityId, name }: MediaPlayerModalPro
   const mediaTitle = entity?.attributes?.media_title || 'Unknown Track';
   const mediaArtist = entity?.attributes?.media_artist || 'Unknown Artist';
   const mediaAlbumName = entity?.attributes?.media_album_name || '';
-  const mediaImageUrl = entity?.attributes?.entity_picture;
+  const mediaImageUrl = getFullImageUrl(entity?.attributes?.entity_picture);
   const volumeLevel = entity?.attributes?.volume_level || 0;
   const mediaDuration = entity?.attributes?.media_duration || 0;
   const mediaPosition = entity?.attributes?.media_position || 0;

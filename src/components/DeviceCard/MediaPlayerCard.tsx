@@ -8,6 +8,7 @@ import {
 import { useEntityState } from '../../contexts/HassContext';
 import { useModal } from '../../contexts/ModalContext';
 import { hassApiFetch } from '../../api/hassApiFetch';
+import { getFullImageUrl } from '../../utils/urlUtils';
 import { ReactComponent as PlayIcon } from '../../assets/utils/media_player/play.svg';
 import { ReactComponent as PauseIcon } from '../../assets/utils/media_player/pause.svg';
 import { ReactComponent as PreviousIcon } from '../../assets/utils/media_player/previous.svg';
@@ -194,7 +195,7 @@ export default function MediaPlayerCard({ entityId, name }: MediaPlayerCardProps
   const mediaTitle = entity?.attributes?.media_title || 'Unknown Track';
   const mediaArtist = entity?.attributes?.media_artist || 'Unknown Artist';
   const mediaAlbumName = entity?.attributes?.media_album_name || '';
-  const mediaImageUrl = entity?.attributes?.entity_picture;
+  const mediaImageUrl = getFullImageUrl(entity?.attributes?.entity_picture);
   const volumeLevel = entity?.attributes?.volume_level || 0;
   const mediaDuration = entity?.attributes?.media_duration || 0;
   const mediaPosition = entity?.attributes?.media_position || 0;

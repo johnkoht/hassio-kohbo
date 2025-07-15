@@ -51,7 +51,7 @@ const Left = styled.div`
   align-items: flex-start;
   justify-content: center;
   height: 100%;
-  padding: 30px 0 26px 20px;
+  padding: 26px 0 26px 20px;
 `;
 
 const Right = styled.div`

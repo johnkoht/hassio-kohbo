@@ -4,15 +4,19 @@ import ellipsisIcon from '../../../assets/device_icons/ellipsis.svg';
 
 const MoreOptions = styled.button`
   position: absolute;
-  top: 24px;
-  right: 16px;
+  top: 0;
+  right: 0;
+  height: 50px;
+  width: 50px;
   background: none;
   border: none;
   color: #fff;
   cursor: pointer;
   opacity: 0.7;
-  &:hover {
-    opacity: 1;
+  
+  svg {
+    margin-right: 10px;
+    margin-top: 9px;
   }
 `;
 
