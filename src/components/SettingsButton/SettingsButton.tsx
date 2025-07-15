@@ -6,7 +6,7 @@ import { ReactComponent as SettingsIcon } from '../../assets/utils/settings.svg'
 
 const ButtonContainer = styled.button`
   position: absolute;
-  bottom: 100px;
+  bottom: 40px;
   left: 60px;
   display: flex;
   align-items: center;

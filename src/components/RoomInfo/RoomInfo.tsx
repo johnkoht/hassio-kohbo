@@ -8,8 +8,8 @@ const InfoContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  margin-top: 85px;
-  margin-bottom: 35px;
+  margin-top: 50px;
+  margin-bottom: 25px;
 `;
 
 const RoomName = styled.h2`
