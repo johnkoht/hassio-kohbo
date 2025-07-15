@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 import DateTime from '../DateTime/DateTime';
+import RoomOccupants from '../RoomOccupants';
+import { getCurrentRoomFromPath } from '../../utils/roomUtils';
+import { PersonData } from '../../types/people';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -21,9 +25,25 @@ const LeftContent = styled.div`
 `;
 
 export default function DashboardHeader({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const currentRoom = getCurrentRoomFromPath(location.pathname);
+
+  const handlePersonClick = (person: PersonData) => {
+    // TODO: Implement person detail modal/view
+    console.log('Clicked on person:', person);
+  };
+
   return (
     <HeaderContainer>
-      <LeftContent>{children}</LeftContent>
+      <LeftContent>
+        {children}
+        {currentRoom && (
+          <RoomOccupants 
+            currentRoom={currentRoom} 
+            onPersonClick={handlePersonClick}
+          />
+        )}
+      </LeftContent>
       <DateTime />
     </HeaderContainer>
   );
