@@ -1,5 +1,6 @@
 import React from 'react';
 import Room from '../components/Room/Room';
+import RoomContainer from '../components/Room/RoomContainer';
 import RoomState from '../components/RoomState/RoomState';
 import OccupancyState from '../components/OccupancyState/OccupancyState';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
@@ -130,7 +131,7 @@ export default function MainBedroomDashboard() {
 
   return (
     <Room bg={kitchenBg}>
-      <div style={{ padding: '50px 60px 40px 60px', height: '100%' }}>
+      <RoomContainer>
         <DashboardHeader>
           <RoomState
             mode={getMode(roomState?.state)}
@@ -192,7 +193,7 @@ export default function MainBedroomDashboard() {
         </div>
         
         <SettingsButton roomName="Main Bedroom" settingsGroups={settingsGroups} />
-      </div>
+      </RoomContainer>
     </Room>
   );
 } 

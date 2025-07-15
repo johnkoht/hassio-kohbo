@@ -1,5 +1,6 @@
 import React from 'react';
 import Room from '../components/Room/Room';
+import RoomContainer from '../components/Room/RoomContainer';
 import RoomState from '../components/RoomState/RoomState';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import RoomInfo from '../components/RoomInfo/RoomInfo';
@@ -126,7 +127,7 @@ export default function JrSuiteDashboard() {
 
   return (
     <Room bg={jrSuiteBg}>
-      <div style={{ padding: '50px 60px 40px 60px', height: '100%' }}>
+      <RoomContainer>
         <DashboardHeader>
           <RoomState
             mode={getMode(roomState?.state)}
@@ -175,7 +176,7 @@ export default function JrSuiteDashboard() {
         </div>
         
         <SettingsButton roomName="Jr. Suite" settingsGroups={settingsGroups} />
-      </div>
+      </RoomContainer>
     </Room>
   );
 } 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Room from '../components/Room/Room';
+import RoomContainer from '../components/Room/RoomContainer';
 import RoomState from '../components/RoomState/RoomState';
 import OccupancyState from '../components/OccupancyState/OccupancyState';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
@@ -148,7 +149,7 @@ export default function KitchenDashboard() {
 
   return (
     <Room bg={kitchenBg}>
-      <div style={{ padding: '50px 60px 40px 60px', height: '100%' }}>
+      <RoomContainer>
         <DashboardHeader>
           <RoomState
             mode={getMode(roomState?.state)}
@@ -167,7 +168,7 @@ export default function KitchenDashboard() {
             pm25Sensor="sensor.kitchen_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
+        <div style={{ width: '100%', marginTop: 10 }}>
           <DeviceRow>
             <MediaPlayerCard 
               entityId="media_player.sonos_kitchen"
@@ -206,7 +207,7 @@ export default function KitchenDashboard() {
         </div>
         
         <SettingsButton roomName="Kitchen" settingsGroups={settingsGroups} />
-      </div>
+      </RoomContainer>
     </Room>
   );
 } 

@@ -9,7 +9,7 @@ const InfoContainer = styled.div`
   align-items: flex-start;
   gap: 2px;
   margin-top: 85px;
-  margin-bottom: 45px;
+  margin-bottom: 35px;
 `;
 
 const RoomName = styled.h2`
@@ -30,9 +30,6 @@ const ClimateInfo = styled.div`
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.2s ease;
-  margin-bottom: 5px;
-  padding: 8px 12px;
-  min-height: 34px;
   display: flex;
   align-items: center;
   user-select: none;

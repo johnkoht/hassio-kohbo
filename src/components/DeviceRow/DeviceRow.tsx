@@ -16,7 +16,7 @@ const DeviceGrid = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  height: 320px; /* 2 rows of 150px + gap */
+  height: 320px;
   gap: 20px;
   align-content: flex-start;
 `;

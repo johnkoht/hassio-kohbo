@@ -1,5 +1,6 @@
 import React from 'react';
 import Room from '../components/Room/Room';
+import RoomContainer from '../components/Room/RoomContainer';
 import RoomState from '../components/RoomState/RoomState';
 import OccupancyState from '../components/OccupancyState/OccupancyState';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
@@ -17,6 +18,7 @@ import { useEntityState } from '../contexts/HassContext';
 import { ReactComponent as BrightIcon } from '../assets/utils/lights_bright.svg';
 import { ReactComponent as DimmedIcon } from '../assets/utils/lights_dimmed.svg';
 import { ReactComponent as NightlightIcon } from '../assets/utils/lights_nightlight.svg';
+
 
 import officeBg from '../assets/room_bgs/office-bg.jpg';
 import autoIcon from '../assets/room_mode_icons/auto.svg';
@@ -170,7 +172,7 @@ export default function OfficeDashboard() {
 
   return (
     <Room bg={officeBg}>
-      <div style={{ padding: '50px 60px 40px 60px', height: '100%' }}>
+      <RoomContainer>
         <DashboardHeader>
           <RoomState
             mode={getMode(roomState?.state)}
@@ -235,7 +237,7 @@ export default function OfficeDashboard() {
         </div>
         
         <SettingsButton roomName="Office" settingsGroups={settingsGroups} />
-      </div>
+      </RoomContainer>
     </Room>
   );
 } 

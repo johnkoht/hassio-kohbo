@@ -9,6 +9,7 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   position: relative;
+  padding-right: 60px;
 `;
 
 const LeftContent = styled.div`
