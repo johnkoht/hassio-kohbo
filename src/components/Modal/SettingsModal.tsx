@@ -150,12 +150,8 @@ export default function SettingsModal({ roomName, settingsGroups }: SettingsModa
   const handleToggle = async (item: SettingItem) => {
     try {
       // Get current entity state
-      const currentState = await fetch(`/api/states/${item.entityId}`, {
-        headers: {
-          'Authorization': `Bearer ${process.env.REACT_APP_HASS_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-      }).then(res => res.json());
+      const currentState = await hassApiFetch(`/api/states/${item.entityId}`)
+        .then(res => res.json());
 
       const isCurrentlyOn = currentState.state === 'on';
       const newState = isCurrentlyOn ? 'off' : 'on';

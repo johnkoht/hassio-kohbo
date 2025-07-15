@@ -2,6 +2,30 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Development Setup
+
+To run this project in development mode, you'll need to configure your Home Assistant connection:
+
+1. **Set up your Home Assistant proxy**: The project is configured to use a proxy in development mode (see `package.json` proxy setting)
+
+2. **Configure your Home Assistant connection**: Create a `.env.development` file in the project root:
+   ```
+   # Home Assistant Configuration for Local Development
+   REACT_APP_HASS_URL=http://your-home-assistant-ip:8123
+   REACT_APP_HASS_TOKEN=your-long-lived-access-token-here
+   ```
+
+3. **Generate a Long-Lived Access Token**:
+   - Go to your Home Assistant instance
+   - Navigate to Profile > Security > Long-Lived Access Tokens
+   - Create a new token and copy it to your `.env.development` file
+
+4. **Update the proxy** (if needed): Edit the `proxy` setting in `package.json` to match your Home Assistant URL
+
+**Note**: The `REACT_APP_HASS_URL` in your `.env.development` file should match the `proxy` setting in `package.json`. This URL is used for WebSocket connections, while HTTP API calls use the proxy for routing.
+
+The development setup uses relative API calls that are proxied to your Home Assistant instance, while production uses the runtime configuration from `public/config.js`.
+
 ## Available Scripts
 
 In the project directory, you can run:
