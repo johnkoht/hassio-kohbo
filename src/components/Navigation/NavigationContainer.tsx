@@ -94,8 +94,7 @@ const EmblaSlide = styled.div`
 const RoomGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding-bottom: 20px;
+  gap: 15px;
 `;
 
 const EmptyState = styled.div`

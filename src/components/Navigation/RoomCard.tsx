@@ -7,7 +7,7 @@ import { RoomData, getAQIDescription } from '../../data/roomsData';
 const CardContainer = styled.div<{ $backgroundImage?: string }>`
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 180px;
   overflow: hidden;
   background: ${props => props.$backgroundImage 
     ? `url(${require(`../../assets/room_bgs/${props.$backgroundImage}`)}) center/cover no-repeat`
@@ -16,11 +16,6 @@ const CardContainer = styled.div<{ $backgroundImage?: string }>`
   filter: drop-shadow(0px 2px 10px #212529);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  }
   
   &:active {
     transform: translateY(0);
