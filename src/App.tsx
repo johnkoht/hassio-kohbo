@@ -7,6 +7,8 @@ import FamilyRoomDashboard from './pages/FamilyRoomDashboard';
 import JrSuiteDashboard from './pages/JrSuiteDashboard';
 import FoyerDashboard from './pages/FoyerDashboard';
 import MainBedroomDashboard from './pages/MainBedroomDashboard';
+import GianlucasRoomDashboard from './pages/GianlucasRoomDashboard';
+import NinosRoomDashboard from './pages/NinosRoomDashboard';
 import GlobalStyle from './styles/globalStyles';
 import { HassProvider } from './contexts/HassContext';
 import { ModalProvider } from './contexts/ModalContext';
@@ -31,6 +33,8 @@ function App() {
               <Route path="/jr-suite" element={<JrSuiteDashboard />} />
               <Route path="/foyer" element={<FoyerDashboard />} />
               <Route path="/main-bedroom" element={<MainBedroomDashboard />} />
+              <Route path="/gianlucas-bedroom" element={<GianlucasRoomDashboard />} />
+              <Route path="/ninos-bedroom" element={<NinosRoomDashboard />} />
               <Route path="/" element={<Navigate to="/kitchen" replace />} />
             </Routes>
             <ModalContainer />

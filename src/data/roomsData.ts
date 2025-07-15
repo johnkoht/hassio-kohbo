@@ -156,7 +156,8 @@ export const roomsData: RoomData[] = [
     aqiSensor: 'sensor.nino_bedroom_awair_score',
     occupancySensor: 'input_boolean.ninos_bedroom_occupied',
     roomStateSensor: 'input_select.ninos_bedroom',
-    hasPage: false,
+    backgroundImage: 'ninos_bedroom.jpg',
+    hasPage: true,
   },
   {
     id: 'gianlucas_bedroom',
@@ -168,8 +169,8 @@ export const roomsData: RoomData[] = [
     aqiSensor: 'sensor.gianluca_bedroom_awair_score',
     occupancySensor: 'input_boolean.gianlucas_room_occupied',
     roomStateSensor: 'input_select.gianlucas_bedroom',
-    // backgroundImage: 'gianlucas_bedroom.jpg',
-    hasPage: false,
+    backgroundImage: 'gianlucas_bedroom.jpg',
+    hasPage: true,
   },
   // Lower Floor
   {
