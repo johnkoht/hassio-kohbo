@@ -42,10 +42,6 @@ const MediaPlayerCardContainer = styled.div<{ $isActive: boolean }>`
   user-select: none;
   gap: 12px;
   
-  &:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
-  }
-  
   &:focus {
     outline: none;
   }
@@ -147,12 +143,7 @@ const ControlButton = styled.button<{ $isActive?: boolean; $buttonType?: 'play' 
   cursor: pointer;
   transition: all 0.2s ease;
   pointer-events: auto;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.05);
-  }
-  
+    
   &:active {
     transform: scale(0.95);
   }

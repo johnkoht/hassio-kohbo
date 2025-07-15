@@ -25,9 +25,7 @@ const Card = styled.div<{ $isActive: boolean }>`
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  &:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
-  }
+
   &:focus {
     outline: none;
   }
