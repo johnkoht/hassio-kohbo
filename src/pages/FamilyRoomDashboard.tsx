@@ -132,35 +132,34 @@ export default function FamilyRoomDashboard() {
             pm25Sensor="sensor.kitchen_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <MediaPlayerCard 
-              entityId="media_player.sonos_family_room"
-              name="Family Room Speaker"
-            />
-            <LightCard
-              entityId="light.family_room_main_lights"
-              name="Family Room Lights"
-              lightType="ceiling"
-              roomName="Family Room"
-              roomLights={roomLights}
-              scenes={familyRoomScenes}
-            />
-            <ThermostatCard
-              entityId="climate.nest_main_floor"
-              name="Thermostat"
-              type="hvac"
-            />
-            <TVCard
-              entityId="media_player.sony_bravia_tv"
-              name="Sony TV"
-            />
-            <TVCard
-              entityId="media_player.master_bedroom"
-              name="Master Bedroom TV"
-            />
-          </DeviceRow>
-        </div>
+        
+        <DeviceRow>
+          <MediaPlayerCard 
+            entityId="media_player.sonos_family_room"
+            name="Family Room Speaker"
+          />
+          <LightCard
+            entityId="light.family_room_main_lights"
+            name="Family Room Lights"
+            lightType="ceiling"
+            roomName="Family Room"
+            roomLights={roomLights}
+            scenes={familyRoomScenes}
+          />
+          <ThermostatCard
+            entityId="climate.nest_main_floor"
+            name="Thermostat"
+            type="hvac"
+          />
+          <TVCard
+            entityId="media_player.sony_bravia_tv"
+            name="Sony TV"
+          />
+          <TVCard
+            entityId="media_player.master_bedroom"
+            name="Master Bedroom TV"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Family Room" settingsGroups={settingsGroups} />
       </RoomContainer>

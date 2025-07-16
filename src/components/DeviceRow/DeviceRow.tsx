@@ -10,6 +10,7 @@ const EmblaContainer = styled.div`
 const EmblaViewport = styled.div`
   width: 100%;
   overflow: hidden;
+  padding: 0 40px;
 `;
 
 const DeviceGrid = styled.div`

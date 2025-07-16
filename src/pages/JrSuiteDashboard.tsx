@@ -145,35 +145,34 @@ export default function JrSuiteDashboard() {
             pm25Sensor="sensor.jr_suite_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <LightCard
-              entityId="light.jr_suite_bedroom_main_lights"
-              name="Ceiling Lights"
-              lightType="ceiling"
-              roomName="Jr. Suite"
-              roomLights={roomLights}
-              scenes={jrSuiteScenes}
-            />
-            <FanCard 
-              entityId="fan.jr_suite_air_purifier" 
-              name="Air Purifier"
-            />
-            <OutletCard 
-              entityId="switch.smart_plug_22_switch" 
-              name="Cristina's Desk"
-            />
-            <DoorCard 
-              entityId="binary_sensor.jr_suite_door_status" 
-              name="Door"
-            />
-            <ThermostatCard
-              entityId="climate.jr_suite"
-              name="Radiant Heat"
-              type="radiant"
-            />
-          </DeviceRow>
-        </div>
+
+        <DeviceRow>
+          <LightCard
+            entityId="light.jr_suite_bedroom_main_lights"
+            name="Ceiling Lights"
+            lightType="ceiling"
+            roomName="Jr. Suite"
+            roomLights={roomLights}
+            scenes={jrSuiteScenes}
+          />
+          <FanCard 
+            entityId="fan.jr_suite_air_purifier" 
+            name="Air Purifier"
+          />
+          <OutletCard 
+            entityId="switch.smart_plug_22_switch" 
+            name="Cristina's Desk"
+          />
+          <DoorCard 
+            entityId="binary_sensor.jr_suite_door_status" 
+            name="Door"
+          />
+          <ThermostatCard
+            entityId="climate.jr_suite"
+            name="Radiant Heat"
+            type="radiant"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Jr. Suite" settingsGroups={settingsGroups} />
       </RoomContainer>

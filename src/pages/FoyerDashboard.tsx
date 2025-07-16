@@ -147,38 +147,37 @@ export default function FoyerDashboard() {
             roomName="Foyer"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <LightCard
-              entityId="light.foyer_ceiling_lights_group"
-              name="Ceiling Lights"
-              lightType="ceiling"
-              roomName="Foyer"
-              roomLights={roomLights}
-              scenes={foyerScenes}
-            />
-            <LightCard
-              entityId="light.foyer_chandelier"
-              name="Chandelier"
-              lightType="ceiling"
-              scenes={foyerScenes}
-            />
-            <LightCard
-              entityId="light.stairs_light"
-              name="Stair Lights"
-              lightType="lightstrip"
-              scenes={foyerScenes}
-            />
-            <DoorCard 
-              entityId="binary_sensor.front_door" 
-              name="Front Door"
-            />
-            <LockCard
-              entityId="lock.front_door"
-              name="Front Door Lock"
-            />
-          </DeviceRow>
-        </div>
+      
+        <DeviceRow>
+          <LightCard
+            entityId="light.foyer_ceiling_lights_group"
+            name="Ceiling Lights"
+            lightType="ceiling"
+            roomName="Foyer"
+            roomLights={roomLights}
+            scenes={foyerScenes}
+          />
+          <LightCard
+            entityId="light.foyer_chandelier"
+            name="Chandelier"
+            lightType="ceiling"
+            scenes={foyerScenes}
+          />
+          <LightCard
+            entityId="light.stairs_light"
+            name="Stair Lights"
+            lightType="lightstrip"
+            scenes={foyerScenes}
+          />
+          <DoorCard 
+            entityId="binary_sensor.front_door" 
+            name="Front Door"
+          />
+          <LockCard
+            entityId="lock.front_door"
+            name="Front Door Lock"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Foyer" settingsGroups={settingsGroups} />
       </RoomContainer>

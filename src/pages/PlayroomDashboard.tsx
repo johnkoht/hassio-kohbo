@@ -143,34 +143,33 @@ export default function PlayroomDashboard() {
             humiditySensor="sensor.playroom_humidity"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <MediaPlayerCard 
-              entityId="media_player.sonos_playroom"
-              name="Playroom Speaker"
-            />
-            <LightCard
-              entityId="light.playroom_lights"
-              name="Playroom Lights"
-              lightType="ceiling"
-              roomName="Playroom"
-              roomLights={roomLights}
-              scenes={playroomScenes}
-            />
-            <OutletCard
-              entityId="switch.christmas_playroom_lights"
-              name="Christmas Lights"
-            />
-            <WindowCard 
-              entityId="binary_sensor.playroom_window_sensor"
-              name="Window"
-            />
-            <WindowCard 
-              entityId="binary_sensor.playroom_window_west_left_opening"
-              name="Window West"
-            />
-          </DeviceRow>
-        </div>
+        
+        <DeviceRow>
+          <MediaPlayerCard 
+            entityId="media_player.sonos_playroom"
+            name="Playroom Speaker"
+          />
+          <LightCard
+            entityId="light.playroom_lights"
+            name="Playroom Lights"
+            lightType="ceiling"
+            roomName="Playroom"
+            roomLights={roomLights}
+            scenes={playroomScenes}
+          />
+          <OutletCard
+            entityId="switch.christmas_playroom_lights"
+            name="Christmas Lights"
+          />
+          <WindowCard 
+            entityId="binary_sensor.playroom_window_sensor"
+            name="Window"
+          />
+          <WindowCard 
+            entityId="binary_sensor.playroom_window_west_left_opening"
+            name="Window West"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Playroom" settingsGroups={settingsGroups} />
       </RoomContainer>

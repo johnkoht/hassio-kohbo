@@ -99,7 +99,8 @@ export function HassProvider({ children }: { children: React.ReactNode }) {
     ws.onclose = (event) => {
       console.log('WebSocket disconnected', { code: event.code, reason: event.reason });
       setIsConnected(false);
-      setIsInitialized(false);
+      // Don't reset isInitialized during reconnections - keep existing data
+      // Only reset on intentional disconnects or max attempts reached
       
       // Attempt to reconnect if we haven't exceeded max attempts
       if (reconnectAttemptsRef.current < maxReconnectAttempts) {
@@ -112,6 +113,7 @@ export function HassProvider({ children }: { children: React.ReactNode }) {
         }, delay);
       } else {
         console.error('Max reconnection attempts reached. Please refresh the page.');
+        setIsInitialized(false); // Only clear data when we give up reconnecting
       }
     };
   }, [url, token]);
@@ -121,12 +123,22 @@ export function HassProvider({ children }: { children: React.ReactNode }) {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         console.log('Page became visible, checking connection...');
-        // If we're not connected and the WebSocket is closed, reconnect
-        if (!isConnected && (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED)) {
-          console.log('Reconnecting after page became visible...');
-          reconnectAttemptsRef.current = 0; // Reset attempts when manually reconnecting
-          connect();
-        }
+        
+        // Give a small delay to allow any in-progress reconnection to complete
+        setTimeout(() => {
+          // Only reconnect if we're truly disconnected and not in the middle of reconnecting
+          if (!isConnected && 
+              (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED) &&
+              !reconnectTimeoutRef.current) {
+            console.log('Reconnecting after page became visible...');
+            reconnectAttemptsRef.current = 0; // Reset attempts when manually reconnecting
+            connect();
+          } else if (isConnected) {
+            console.log('Connection already active, no reconnection needed');
+          } else {
+            console.log('Reconnection already in progress, skipping');
+          }
+        }, 500);
       }
     };
 

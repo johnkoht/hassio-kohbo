@@ -191,50 +191,49 @@ export default function OfficeDashboard() {
             pm25Sensor="sensor.office_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <MediaPlayerCard 
-              entityId="media_player.sonos_office"
-              name="Office Speaker"
-            />
-            <LightCard
-              entityId="light.office_lights"
-              name="Ceiling Lights"
-              lightType="ceiling"
-              roomName="Office"
-              roomLights={roomLights}
-              scenes={hueScenes}
-            />
-            <LightCard
-              entityId="light.office_el_gato_light"
-              name="Desk Lamp"
-              lightType="lamp"
-              scenes={casetaScenes} // Lutron Caseta - brightness-based scenes
-            />
-            <LightCard
-              entityId="light.office_shelves"
-              name="Shelf Lights"
-              lightType="lightstrip"
-              scenes={hueScenes} // Philips Hue - color-capable scenes
-            />
-            <FanCard 
-              entityId="fan.office_air_purifier" 
-              name="Air Purifier"
-            />
-            <OutletCard 
-              entityId="switch.smart_plug_11_switch" 
-              name="Desk Outlet"
-            />
-            <DoorCard 
-              entityId="binary_sensor.office_doors" 
-              name="Door"
-            />
-            <WindowCard 
-              entityId="binary_sensor.office_window_sensor"
-              name="Window"
-            />
-          </DeviceRow>
-        </div>
+        
+        <DeviceRow>
+          <MediaPlayerCard 
+            entityId="media_player.sonos_office"
+            name="Office Speaker"
+          />
+          <LightCard
+            entityId="light.office_lights"
+            name="Ceiling Lights"
+            lightType="ceiling"
+            roomName="Office"
+            roomLights={roomLights}
+            scenes={hueScenes}
+          />
+          <LightCard
+            entityId="light.office_el_gato_light"
+            name="Desk Lamp"
+            lightType="lamp"
+            scenes={casetaScenes} // Lutron Caseta - brightness-based scenes
+          />
+          <LightCard
+            entityId="light.office_shelves"
+            name="Shelf Lights"
+            lightType="lightstrip"
+            scenes={hueScenes} // Philips Hue - color-capable scenes
+          />
+          <FanCard 
+            entityId="fan.office_air_purifier" 
+            name="Air Purifier"
+          />
+          <OutletCard 
+            entityId="switch.smart_plug_11_switch" 
+            name="Desk Outlet"
+          />
+          <DoorCard 
+            entityId="binary_sensor.office_doors" 
+            name="Door"
+          />
+          <WindowCard 
+            entityId="binary_sensor.office_window_sensor"
+            name="Window"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Office" settingsGroups={settingsGroups} />
       </RoomContainer>

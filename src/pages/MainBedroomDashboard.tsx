@@ -150,47 +150,46 @@ export default function MainBedroomDashboard() {
             pm25Sensor="sensor.main_bedroom_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <MediaPlayerCard 
-              entityId="media_player.sonos_main_bedroom"
-              name="Main Bedroom Speaker"
-            />
-            <LightCard
-              entityId="light.main_bedroom_main_lights"
-              name="Main Bedroom Lights"
-              lightType="ceiling"
-              roomName="Main Bedroom"
-              roomLights={roomLights}
-              scenes={mainBedroomScenes}
-            />
-            <ThermostatCard
-              entityId="climate.main_bedroom"
-              name="Radiant Heat"
-              type="radiant"
-            />
-            <LightCard
-              entityId="light.hue_ambiance_lamp_1"
-              name="John's Bedside Lamp"
-              lightType="lamp"
-              scenes={mainBedroomScenes}
-            />
-            <LightCard
-              entityId="light.hue_ambiance_lamp_1_2"
-              name="Cristina's Bedside Lamp"
-              lightType="lamp"
-              scenes={mainBedroomScenes}
-            />
-            <FanCard 
-              entityId="fan.main_bedroom_air_purifier" 
-              name="Air Purifier"
-            />
-            <DoorCard 
-              entityId="binary_sensor.main_bedroom_door_sensor_status" 
-              name="Door"
-            />
-          </DeviceRow>
-        </div>
+          
+        <DeviceRow>
+          <MediaPlayerCard 
+            entityId="media_player.sonos_main_bedroom"
+            name="Main Bedroom Speaker"
+          />
+          <LightCard
+            entityId="light.main_bedroom_main_lights"
+            name="Main Bedroom Lights"
+            lightType="ceiling"
+            roomName="Main Bedroom"
+            roomLights={roomLights}
+            scenes={mainBedroomScenes}
+          />
+          <ThermostatCard
+            entityId="climate.main_bedroom"
+            name="Radiant Heat"
+            type="radiant"
+          />
+          <LightCard
+            entityId="light.hue_ambiance_lamp_1"
+            name="John's Bedside Lamp"
+            lightType="lamp"
+            scenes={mainBedroomScenes}
+          />
+          <LightCard
+            entityId="light.hue_ambiance_lamp_1_2"
+            name="Cristina's Bedside Lamp"
+            lightType="lamp"
+            scenes={mainBedroomScenes}
+          />
+          <FanCard 
+            entityId="fan.main_bedroom_air_purifier" 
+            name="Air Purifier"
+          />
+          <DoorCard 
+            entityId="binary_sensor.main_bedroom_door_sensor_status" 
+            name="Door"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Main Bedroom" settingsGroups={settingsGroups} />
       </RoomContainer>

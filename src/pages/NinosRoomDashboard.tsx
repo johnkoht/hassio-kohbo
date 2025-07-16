@@ -145,47 +145,46 @@ export default function NinosRoomDashboard() {
             pm25Sensor="sensor.nino_bedroom_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <MediaPlayerCard 
-              entityId="media_player.ninos_room"
-              name="Nino's Speaker"
-            />
-            <LightCard
-              entityId="light.ninos_bedroom_main_lights"
-              name="Main Lights"
-              lightType="ceiling"
-              scenes={hueScenes}
-            />
-            <LightCard
-              entityId="light.nino_bedroom_lamp"
-              name="Lamp"
-              lightType="lamp"
-              scenes={hueScenes}
-            />
-            <ThermostatCard
-              entityId="climate.ninos_bedroom"
-              name="Floor Heating"
-              type="radiant"
-            />
-            <FanCard 
-              entityId="fan.ninos_bedroom_air_purifer" 
-              name="Air Purifier"
-            />
-            <OutletCard 
-              entityId="switch.smart_plug_2_switch" 
-              name="Heater"
-            />
-            <OutletCard 
-              entityId="switch.smart_plug_1_switch" 
-              name="Smart Plug"
-            />
-            <DoorCard 
-              entityId="binary_sensor.ninos_door_sensor_status" 
-              name="Door"
-            />
-          </DeviceRow>
-        </div>
+        
+        <DeviceRow>
+          <MediaPlayerCard 
+            entityId="media_player.ninos_room"
+            name="Nino's Speaker"
+          />
+          <LightCard
+            entityId="light.ninos_bedroom_main_lights"
+            name="Main Lights"
+            lightType="ceiling"
+            scenes={hueScenes}
+          />
+          <LightCard
+            entityId="light.nino_bedroom_lamp"
+            name="Lamp"
+            lightType="lamp"
+            scenes={hueScenes}
+          />
+          <ThermostatCard
+            entityId="climate.ninos_bedroom"
+            name="Floor Heating"
+            type="radiant"
+          />
+          <FanCard 
+            entityId="fan.ninos_bedroom_air_purifer" 
+            name="Air Purifier"
+          />
+          <OutletCard 
+            entityId="switch.smart_plug_2_switch" 
+            name="Heater"
+          />
+          <OutletCard 
+            entityId="switch.smart_plug_1_switch" 
+            name="Smart Plug"
+          />
+          <DoorCard 
+            entityId="binary_sensor.ninos_door_sensor_status" 
+            name="Door"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Nino's Room" settingsGroups={settingsGroups} />
       </RoomContainer>

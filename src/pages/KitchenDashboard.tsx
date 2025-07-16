@@ -168,43 +168,42 @@ export default function KitchenDashboard() {
             pm25Sensor="sensor.kitchen_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 10 }}>
-          <DeviceRow>
-            <MediaPlayerCard 
-              entityId="media_player.sonos_kitchen"
-              name="Kitchen Speaker"
-            />
-            <LightCard
-              entityId="light.kitchen_lights"
-              name="Kitchen Lights"
-              lightType="ceiling"
-              roomName="Kitchen"
-              roomLights={roomLights}
-              scenes={kitchenScenes}
-            />
-            <FanCard 
-              entityId="fan.kitchen_air_purifier" 
-              name="Air Purifier"
-            />
-            <DoorCard 
-              entityId="binary_sensor.kitchen_door" 
-              name="Door"
-            />
-            <WindowCard 
-              entityId="binary_sensor.kitchen_window_sensor"
-              name="Window South"
-            />
-            <WindowCard 
-              entityId="binary_sensor.kitchen_window_west_middle_sensor"
-              name="Window West"
-            />
-            <LeakSensorCard
-              entityId="binary_sensor.kitchen_sink_leak_sensor"
-              name="Sink Leak Sensor"
-              state={leakSensor?.state}
-            />
-          </DeviceRow>
-        </div>
+        
+        <DeviceRow>
+          <MediaPlayerCard 
+            entityId="media_player.sonos_kitchen"
+            name="Kitchen Speaker"
+          />
+          <LightCard
+            entityId="light.kitchen_lights"
+            name="Kitchen Lights"
+            lightType="ceiling"
+            roomName="Kitchen"
+            roomLights={roomLights}
+            scenes={kitchenScenes}
+          />
+          <FanCard 
+            entityId="fan.kitchen_air_purifier" 
+            name="Air Purifier"
+          />
+          <DoorCard 
+            entityId="binary_sensor.kitchen_door" 
+            name="Door"
+          />
+          <WindowCard 
+            entityId="binary_sensor.kitchen_window_sensor"
+            name="Window South"
+          />
+          <WindowCard 
+            entityId="binary_sensor.kitchen_window_west_middle_sensor"
+            name="Window West"
+          />
+          <LeakSensorCard
+            entityId="binary_sensor.kitchen_sink_leak_sensor"
+            name="Sink Leak Sensor"
+            state={leakSensor?.state}
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Kitchen" settingsGroups={settingsGroups} />
       </RoomContainer>

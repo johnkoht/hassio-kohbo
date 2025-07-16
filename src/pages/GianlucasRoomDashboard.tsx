@@ -142,34 +142,33 @@ export default function GianlucasRoomDashboard() {
             pm25Sensor="sensor.gianluca_bedroom_awair_pm2_5"
           />
         </div>
-        <div style={{ width: '100%', marginTop: 25 }}>
-          <DeviceRow>
-            <LightCard
-              entityId="light.gianluca_bedroom_lights"
-              name="Ceiling Lights"
-              lightType="ceiling"
-              scenes={hueScenes}
-            />
-            <LightCard
-              entityId="light.hue_color_candle_1"
-              name="Lamp"
-              lightType="lamp"
-              scenes={hueScenes}
-            />
-            <FanCard 
-              entityId="fan.gianlucas_bedroom_air_purifier" 
-              name="Air Purifier"
-            />
-            <OutletCard 
-              entityId="switch.hue_smart_plug_1" 
-              name="Heater"
-            />
-            <DoorCard 
-              entityId="binary_sensor.gianlucas_door_sensor_status" 
-              name="Door"
-            />
-          </DeviceRow>
-        </div>
+      
+        <DeviceRow>
+          <LightCard
+            entityId="light.gianluca_bedroom_lights"
+            name="Ceiling Lights"
+            lightType="ceiling"
+            scenes={hueScenes}
+          />
+          <LightCard
+            entityId="light.hue_color_candle_1"
+            name="Lamp"
+            lightType="lamp"
+            scenes={hueScenes}
+          />
+          <FanCard 
+            entityId="fan.gianlucas_bedroom_air_purifier" 
+            name="Air Purifier"
+          />
+          <OutletCard 
+            entityId="switch.hue_smart_plug_1" 
+            name="Heater"
+          />
+          <DoorCard 
+            entityId="binary_sensor.gianlucas_door_sensor_status" 
+            name="Door"
+          />
+        </DeviceRow>
         
         <SettingsButton roomName="Gianluca's Room" settingsGroups={settingsGroups} />
       </RoomContainer>

@@ -10,6 +10,7 @@ const InfoContainer = styled.div`
   gap: 2px;
   margin-top: 50px;
   margin-bottom: 25px;
+  padding: 0 40px;
 `;
 
 const RoomName = styled.h2`

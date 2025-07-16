@@ -13,7 +13,7 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   position: relative;
-  padding-right: 60px;
+  padding: 40px 40px 0 40px;
 `;
 
 const LeftContent = styled.div`
